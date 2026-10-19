@@ -1,0 +1,626 @@
+[
+  {
+    "slug": "ai-ml",
+    "name": "AI & Machine Learning",
+    "shortName": "AI & ML",
+    "description": "How models learn, fail, generalize, and shape the systems built around them.",
+    "subfields": [
+      "Learning Theory",
+      "Model Behavior",
+      "Evaluation",
+      "Generative Models",
+      "Applied ML"
+    ],
+    "family": "lavender",
+    "icon": "spark",
+    "foundation": "Basic probability, linear algebra intuition, and how a model is trained."
+  },
+  {
+    "slug": "ai-engineering",
+    "name": "AI Engineering & Infrastructure",
+    "shortName": "AI Engineering",
+    "description": "Serving, evaluating, and operating machine learning systems under real constraints.",
+    "subfields": [
+      "Inference Systems",
+      "Vector Search",
+      "Model Serving",
+      "AI Observability",
+      "Agent Infrastructure"
+    ],
+    "family": "blue",
+    "icon": "server",
+    "foundation": "How model inference works, plus basic APIs and latency."
+  },
+  {
+    "slug": "ai-assisted-dev",
+    "name": "AI-Assisted Software Development",
+    "shortName": "AI-Assisted Dev",
+    "description": "Working with coding agents without giving up judgment, safety, or understanding.",
+    "subfields": [
+      "Code Review",
+      "Context Engineering",
+      "Verification",
+      "Agent Safety",
+      "Developer Workflow"
+    ],
+    "family": "lavender",
+    "icon": "terminal",
+    "foundation": "Comfort reading, testing, and reviewing code in at least one language."
+  },
+  {
+    "slug": "algorithms",
+    "name": "Algorithms & Data Structures",
+    "shortName": "Algorithms",
+    "description": "The ideas behind efficient computation, from probability to graph structure.",
+    "subfields": [
+      "Algorithm Analysis",
+      "Graph Algorithms",
+      "Probabilistic Structures",
+      "Optimization",
+      "Data Structures"
+    ],
+    "family": "blue",
+    "icon": "nodes",
+    "foundation": "Big-O notation and basic data structures."
+  },
+  {
+    "slug": "computer-architecture",
+    "name": "Computer Architecture",
+    "shortName": "Architecture",
+    "description": "What the machine actually does beneath your source code.",
+    "subfields": [
+      "Memory Hierarchy",
+      "Instruction Sets",
+      "Parallelism",
+      "Accelerators",
+      "Hardware-Software Co-design"
+    ],
+    "family": "butter",
+    "icon": "cpu",
+    "foundation": "How source code becomes instructions, and what a memory hierarchy is."
+  },
+  {
+    "slug": "operating-systems",
+    "name": "Operating Systems",
+    "shortName": "Operating Systems",
+    "description": "The invisible machinery that shares hardware between unruly programs.",
+    "subfields": [
+      "Scheduling",
+      "Virtual Memory",
+      "Concurrency",
+      "File Systems",
+      "Kernels"
+    ],
+    "family": "blue",
+    "icon": "layers",
+    "foundation": "Processes, threads, and basic system calls."
+  },
+  {
+    "slug": "networking",
+    "name": "Networking",
+    "shortName": "Networking",
+    "description": "How packets find their way, and why the path is never as simple as it looks.",
+    "subfields": [
+      "Transport Protocols",
+      "Routing",
+      "DNS",
+      "Congestion Control",
+      "Network Security"
+    ],
+    "family": "mint",
+    "icon": "network",
+    "foundation": "IP addresses, ports, and the client-server model."
+  },
+  {
+    "slug": "distributed-systems",
+    "name": "Distributed Systems",
+    "shortName": "Distributed Systems",
+    "description": "Coordination, failure, and consistency across machines that cannot agree on time.",
+    "subfields": [
+      "Consensus",
+      "Fault Tolerance",
+      "Replication",
+      "Ordering",
+      "Distributed Storage"
+    ],
+    "family": "lavender",
+    "icon": "network",
+    "foundation": "Networking basics, and why remote calls can fail."
+  },
+  {
+    "slug": "databases",
+    "name": "Databases & Storage Engines",
+    "shortName": "Databases",
+    "description": "How systems store, find, and protect data when the dataset outgrows memory.",
+    "subfields": [
+      "Query Processing",
+      "Transactions",
+      "Indexing",
+      "Storage Layouts",
+      "Replication"
+    ],
+    "family": "peach",
+    "icon": "database",
+    "foundation": "Relational tables, SQL basics, and transactions."
+  },
+  {
+    "slug": "software-architecture",
+    "name": "Software Architecture",
+    "shortName": "Architecture",
+    "description": "Design decisions that determine how software evolves, scales, and resists change.",
+    "subfields": [
+      "Modularity",
+      "Service Boundaries",
+      "Event-Driven Design",
+      "Technical Debt",
+      "Evolution"
+    ],
+    "family": "blue",
+    "icon": "compass",
+    "foundation": "Experience building and changing a non-trivial codebase."
+  },
+  {
+    "slug": "programming-languages",
+    "name": "Programming Language Design",
+    "shortName": "Languages",
+    "description": "The type systems, memory models, and runtime choices that shape how we think in code.",
+    "subfields": [
+      "Type Systems",
+      "Memory Management",
+      "Semantics",
+      "Concurrency Models",
+      "Language Design"
+    ],
+    "family": "mint",
+    "icon": "code",
+    "foundation": "Experience with at least two languages and basic type concepts."
+  },
+  {
+    "slug": "compilers",
+    "name": "Compilers & Runtimes",
+    "shortName": "Compilers",
+    "description": "How source code becomes machine behavior, and where optimization changes meaning.",
+    "subfields": [
+      "Optimization",
+      "Intermediate Representations",
+      "Code Generation",
+      "Just-in-Time Compilation",
+      "Program Analysis"
+    ],
+    "family": "butter",
+    "icon": "brackets",
+    "foundation": "Parsing basics, and how high-level code maps to instructions."
+  },
+  {
+    "slug": "cybersecurity",
+    "name": "Cybersecurity",
+    "shortName": "Security",
+    "description": "Attack surfaces, defensive design, and the assumptions that quietly fail.",
+    "subfields": [
+      "AppSec",
+      "Threat Modeling",
+      "Identity",
+      "Exploitation",
+      "Defense in Depth"
+    ],
+    "family": "peach",
+    "icon": "shield",
+    "foundation": "HTTP, authentication, and how web applications are deployed."
+  },
+  {
+    "slug": "cryptography",
+    "name": "Cryptography & Applied Security",
+    "shortName": "Cryptography",
+    "description": "The math and protocol design behind trust on an untrusted network.",
+    "subfields": [
+      "Public-Key Cryptography",
+      "Secure Protocols",
+      "Key Management",
+      "Signatures",
+      "Applied Crypto"
+    ],
+    "family": "lavender",
+    "icon": "lock",
+    "foundation": "Modular arithmetic intuition and basic hashing."
+  },
+  {
+    "slug": "cloud",
+    "name": "Cloud Computing",
+    "shortName": "Cloud",
+    "description": "The primitives, abstractions, and failure modes of rented infrastructure.",
+    "subfields": [
+      "Compute Models",
+      "Object Storage",
+      "Serverless",
+      "Multi-Cloud",
+      "Cloud Networking"
+    ],
+    "family": "blue",
+    "icon": "cloud",
+    "foundation": "Virtual machines, containers, and basic networking."
+  },
+  {
+    "slug": "devops",
+    "name": "DevOps & Platform Engineering",
+    "shortName": "DevOps",
+    "description": "Turning build, deploy, and operations into a reliable internal product.",
+    "subfields": [
+      "CI/CD",
+      "Infrastructure as Code",
+      "Deployment",
+      "Developer Platforms",
+      "Release Engineering"
+    ],
+    "family": "mint",
+    "icon": "wrench",
+    "foundation": "Version control, automated tests, and deployment basics."
+  },
+  {
+    "slug": "sre",
+    "name": "Site Reliability Engineering",
+    "shortName": "SRE",
+    "description": "Engineering for reliability budgets instead of hoping nothing breaks.",
+    "subfields": [
+      "SLOs",
+      "Incident Response",
+      "Observability",
+      "Capacity Planning",
+      "Resilience"
+    ],
+    "family": "peach",
+    "icon": "gauge",
+    "foundation": "Service metrics, logging, and how incidents are handled."
+  },
+  {
+    "slug": "backend",
+    "name": "Backend Engineering",
+    "shortName": "Backend",
+    "description": "The request path, queues, caches, and state machines behind the API.",
+    "subfields": [
+      "Request Handling",
+      "Caching",
+      "Background Jobs",
+      "Concurrency",
+      "Service Design"
+    ],
+    "family": "blue",
+    "icon": "server",
+    "foundation": "HTTP, databases, and server-side programming."
+  },
+  {
+    "slug": "frontend",
+    "name": "Frontend Engineering",
+    "shortName": "Frontend",
+    "description": "Rendering, state, and performance in the most hostile runtime you ship to.",
+    "subfields": [
+      "Rendering",
+      "State Management",
+      "Web Performance",
+      "Browser Internals",
+      "Accessibility"
+    ],
+    "family": "lavender",
+    "icon": "browser",
+    "foundation": "HTML, CSS, JavaScript, and the browser."
+  },
+  {
+    "slug": "apis",
+    "name": "API Design & Integration",
+    "shortName": "APIs",
+    "description": "Contracts between teams and systems, and the cost of changing them.",
+    "subfields": [
+      "API Contracts",
+      "Versioning",
+      "Integration Patterns",
+      "RPC vs REST",
+      "Event APIs"
+    ],
+    "family": "mint",
+    "icon": "plug",
+    "foundation": "HTTP methods, JSON, and authentication basics."
+  },
+  {
+    "slug": "data-engineering",
+    "name": "Data Engineering",
+    "shortName": "Data Engineering",
+    "description": "Moving and reshaping data without losing correctness, freshness, or trust.",
+    "subfields": [
+      "Batch Processing",
+      "Streaming",
+      "Data Quality",
+      "Pipeline Design",
+      "Analytics Infrastructure"
+    ],
+    "family": "butter",
+    "icon": "pipeline",
+    "foundation": "SQL, file formats, and batch versus continuous data."
+  },
+  {
+    "slug": "search",
+    "name": "Information Retrieval & Search",
+    "shortName": "Search",
+    "description": "Ranking meaning: indexes, relevance, embeddings, and the limits of similarity.",
+    "subfields": [
+      "Ranking",
+      "Inverted Indexes",
+      "Vector Search",
+      "Evaluation",
+      "Query Understanding"
+    ],
+    "family": "peach",
+    "icon": "search",
+    "foundation": "Basic probability and text processing."
+  },
+  {
+    "slug": "theory",
+    "name": "Computer Science Theory",
+    "shortName": "Theory",
+    "description": "Complexity, computability, and the boundaries that do not move.",
+    "subfields": [
+      "Complexity Theory",
+      "Automata",
+      "Information Theory",
+      "Randomized Algorithms",
+      "Logic"
+    ],
+    "family": "lavender",
+    "icon": "sigma",
+    "foundation": "Proof techniques and basic discrete mathematics."
+  },
+  {
+    "slug": "performance",
+    "name": "Performance Engineering",
+    "shortName": "Performance",
+    "description": "Measuring first, then finding the constraint that actually limits the system.",
+    "subfields": [
+      "Profiling",
+      "Latency Analysis",
+      "Throughput",
+      "Memory Behavior",
+      "Benchmarking"
+    ],
+    "family": "blue",
+    "icon": "activity",
+    "foundation": "Big-O notation, plus a profiler or timing measurements."
+  },
+  {
+    "slug": "testing",
+    "name": "Testing & Verification",
+    "shortName": "Testing",
+    "description": "Evidence that software does what it should, not merely that it runs.",
+    "subfields": [
+      "Test Design",
+      "Property-Based Testing",
+      "Formal Methods",
+      "Fuzzing",
+      "Flaky Systems"
+    ],
+    "family": "mint",
+    "icon": "check",
+    "foundation": "Writing and running automated tests."
+  },
+  {
+    "slug": "open-source",
+    "name": "Open-Source Engineering",
+    "shortName": "Open Source",
+    "description": "Maintaining public software: governance, compatibility, and invisible labor.",
+    "subfields": [
+      "Maintenance",
+      "Governance",
+      "Licensing",
+      "Community",
+      "Sustainability"
+    ],
+    "family": "butter",
+    "icon": "branch",
+    "foundation": "Git, code review, and package distribution."
+  },
+  {
+    "slug": "developer-tools",
+    "name": "Developer Tools & Build Systems",
+    "shortName": "Dev Tools",
+    "description": "The compilers, linters, and build graphs powering the inner loop.",
+    "subfields": [
+      "Build Systems",
+      "Static Analysis",
+      "Caching",
+      "Reproducibility",
+      "IDE Infrastructure"
+    ],
+    "family": "blue",
+    "icon": "box",
+    "foundation": "Command-line builds, dependency managers, and editors."
+  },
+  {
+    "slug": "system-design",
+    "name": "System Design",
+    "shortName": "System Design",
+    "description": "Choosing boundaries, data flows, and failure strategies before writing code.",
+    "subfields": [
+      "Scalability",
+      "Trade-off Analysis",
+      "Storage Choices",
+      "Capacity",
+      "Architecture Reviews"
+    ],
+    "family": "lavender",
+    "icon": "workflow",
+    "foundation": "Backend basics and the idea of horizontal scaling."
+  },
+  {
+    "slug": "privacy",
+    "name": "Privacy & Digital Trust",
+    "shortName": "Privacy",
+    "description": "Collecting less, exposing less, and proving what happens to user data.",
+    "subfields": [
+      "Data Minimization",
+      "Anonymity",
+      "Consent",
+      "Tracking",
+      "Trust Engineering"
+    ],
+    "family": "peach",
+    "icon": "eyeOff",
+    "foundation": "How web data is collected and stored."
+  },
+  {
+    "slug": "product",
+    "name": "Technical Product Thinking",
+    "shortName": "Product",
+    "description": "Connecting engineering choices to user problems and business reality.",
+    "subfields": [
+      "Scoping",
+      "Product-Market Fit",
+      "Metrics",
+      "Discovery",
+      "Prioritization"
+    ],
+    "family": "butter",
+    "icon": "bulb",
+    "foundation": "Building a feature and observing how people use it."
+  },
+  {
+    "slug": "embedded",
+    "name": "Robotics & Embedded Systems",
+    "shortName": "Embedded",
+    "description": "Software that must obey physics, power budgets, and real-time deadlines.",
+    "subfields": [
+      "Real-Time Systems",
+      "Sensors",
+      "Control",
+      "Firmware",
+      "Edge Computing"
+    ],
+    "family": "mint",
+    "icon": "robot",
+    "foundation": "C or C++ basics, and what a microcontroller does."
+  },
+  {
+    "slug": "vision",
+    "name": "Computer Vision",
+    "shortName": "Vision",
+    "description": "Turning pixels into structure, and understanding where perception fails.",
+    "subfields": [
+      "Image Models",
+      "Detection",
+      "Representation Learning",
+      "Video",
+      "Multimodal Systems"
+    ],
+    "family": "lavender",
+    "icon": "camera",
+    "foundation": "Linear algebra and basic neural networks."
+  },
+  {
+    "slug": "nlp",
+    "name": "Natural Language Processing",
+    "shortName": "NLP",
+    "description": "Language, meaning, evaluation, and the strange behavior of text models.",
+    "subfields": [
+      "Language Models",
+      "Tokenization",
+      "Evaluation",
+      "Retrieval",
+      "Alignment"
+    ],
+    "family": "blue",
+    "icon": "chat",
+    "foundation": "Basic machine learning and text processing."
+  },
+  {
+    "slug": "rl",
+    "name": "Reinforcement Learning",
+    "shortName": "RL",
+    "description": "Learning from consequences: reward design, exploration, and fragile policies.",
+    "subfields": [
+      "Reward Design",
+      "Policy Optimization",
+      "Exploration",
+      "Simulation",
+      "RLHF"
+    ],
+    "family": "peach",
+    "icon": "target",
+    "foundation": "Probability and basic optimization."
+  },
+  {
+    "slug": "datacenter",
+    "name": "Datacenter & Infrastructure Engineering",
+    "shortName": "Datacenters",
+    "description": "The physical systems behind the cloud: power, cooling, networks, and scarcity.",
+    "subfields": [
+      "Power",
+      "Cooling",
+      "Hardware Lifecycle",
+      "Network Fabric",
+      "Capacity"
+    ],
+    "family": "butter",
+    "icon": "building",
+    "foundation": "Servers, networking, and physical infrastructure basics."
+  },
+  {
+    "slug": "supply-chain",
+    "name": "Software Supply-Chain Security",
+    "shortName": "Supply Chain",
+    "description": "Trusting dependencies, builds, and the people behind your software.",
+    "subfields": [
+      "Dependency Risk",
+      "Build Provenance",
+      "Signing",
+      "Registry Security",
+      "SBOMs"
+    ],
+    "family": "mint",
+    "icon": "package",
+    "foundation": "Package managers, dependency files, and continuous integration."
+  },
+  {
+    "slug": "economics",
+    "name": "Engineering Economics & Trade-Offs",
+    "shortName": "Economics",
+    "description": "Why the technically superior option can still be the wrong engineering decision.",
+    "subfields": [
+      "Cost Modeling",
+      "Build vs Buy",
+      "Opportunity Cost",
+      "Scaling Economics",
+      "Team Topology"
+    ],
+    "family": "peach",
+    "icon": "coins",
+    "foundation": "Basic cost awareness and how engineering time is allocated."
+  },
+  {
+    "slug": "hci",
+    "name": "Human–Computer Interaction",
+    "shortName": "HCI",
+    "description": "Designing interfaces around human attention, memory, and error.",
+    "subfields": [
+      "Usability",
+      "Interaction Design",
+      "Accessibility",
+      "Cognition",
+      "Evaluation"
+    ],
+    "family": "lavender",
+    "icon": "cursor",
+    "foundation": "Designing or building an interface people actually use."
+  },
+  {
+    "slug": "emerging",
+    "name": "Emerging Computing Paradigms",
+    "shortName": "Emerging",
+    "description": "New computing substrates and what they might change about software.",
+    "subfields": [
+      "Quantum Computing",
+      "Neuromorphic Hardware",
+      "Optical Computing",
+      "Edge AI",
+      "Post-CMOS"
+    ],
+    "family": "blue",
+    "icon": "orbit",
+    "foundation": "Comfort with basic physics or hardware abstractions."
+  }
+]

@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F7F6F2"/>
+      <stop offset="1" stop-color="#F3F0FA"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.15" cy="0.1" r="0.7">
+      <stop offset="0" stop-color="#DCD6FF" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#DCD6FF" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="glow2" cx="0.98" cy="0.2" r="0.55">
+      <stop offset="0" stop-color="#D5E8FF" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#D5E8FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#F1EDFF"/>
+      <stop offset="0.46" stop-color="#DCD6FF"/>
+      <stop offset="1" stop-color="#CBD9FB"/>
+    </linearGradient>
+    <linearGradient id="clay" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFFEFA"/>
+      <stop offset="1" stop-color="#F0ECFD"/>
+    </linearGradient>
+    <linearGradient id="peach" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#FFF0E7"/>
+      <stop offset="1" stop-color="#FFD3BC"/>
+    </linearGradient>
+    <linearGradient id="mint" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#EBFFF6"/>
+      <stop offset="1" stop-color="#C7F1DB"/>
+    </linearGradient>
+    <filter id="soft" x="-40%" y="-40%" width="180%" height="200%">
+      <feDropShadow dx="0" dy="26" stdDeviation="26" flood-color="#40338A" flood-opacity="0.32"/>
+    </filter>
+    <filter id="sm" x="-40%" y="-40%" width="180%" height="200%">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#40338A" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect width="1200" height="630" fill="url(#glow)"/>
+  <rect width="1200" height="630" fill="url(#glow2)"/>
+  <g opacity="0.34" stroke="#FFFFFF" stroke-width="1">
+    <circle cx="1010" cy="320" r="310" fill="none"/>
+    <circle cx="1010" cy="320" r="250" fill="none"/>
+    <circle cx="1010" cy="320" r="390" fill="none"/>
+  </g>
+  <!-- clay panel -->
+  <g transform="rotate(-3 1000 315)" filter="url(#soft)">
+    <rect x="820" y="72" width="360" height="486" rx="76" fill="url(#panel)" stroke="#FFFFFF" stroke-opacity="0.7"/>
+  </g>
+  <g transform="rotate(-3 1000 315)" opacity="0.5" fill="none" stroke="#FFFFFF">
+    <circle cx="1000" cy="315" r="180" stroke-width="1.5"/>
+    <circle cx="1000" cy="315" r="132" stroke-width="1.5"/>
+    <circle cx="1000" cy="315" r="236" stroke-width="1.2" stroke-dasharray="5 9"/>
+  </g>
+  <!-- central mark -->
+  <g transform="rotate(2 1000 310)" filter="url(#sm)">
+    <rect x="920" y="230" width="160" height="160" rx="46" fill="url(#clay)" stroke="#FFFFFF"/>
+    <rect x="944" y="254" width="52" height="52" rx="14" fill="#D5F4E5"/>
+    <rect x="1004" y="254" width="52" height="52" rx="14" fill="#FFE0D0"/>
+    <rect x="944" y="314" width="52" height="52" rx="14" fill="#D5E8FF"/>
+    <rect x="1004" y="314" width="52" height="52" rx="14" fill="#20212B"/>
+    <circle cx="1030" cy="340" r="7" fill="#F7F6F2"/>
+  </g>
+  <!-- nodes -->
+  <g filter="url(#sm)">
+    <rect x="866" y="144" width="160" height="56" rx="28" fill="#FFFEFA" stroke="#FFFFFF"/>
+    <rect x="880" y="156" width="32" height="32" rx="11" fill="#DCD6FF"/>
+    <circle cx="896" cy="172" r="3" fill="#5847BB"/>
+    <circle cx="888" cy="172" r="3" fill="#5847BB"/>
+    <circle cx="904" cy="172" r="3" fill="#5847BB"/>
+    <circle cx="896" cy="164" r="3" fill="#5847BB"/>
+  </g>
+  <g filter="url(#sm)">
+    <rect x="968" y="482" width="184" height="86" rx="24" fill="#20212B"/>
+    <line x1="988" y1="526" x2="1132" y2="526" stroke="#FFFFFF" stroke-opacity="0.14" stroke-dasharray="4 4"/>
+    <circle cx="998" cy="507" r="7" fill="none" stroke="#DCD6FF" stroke-width="2"/>
+    <path d="M998 507 L1001 503" stroke="#DCD6FF" stroke-width="1.8"/>
+    <path d="M992 500 h12" stroke="#DCD6FF" stroke-width="2" stroke-linecap="round"/>
+  </g>
+  <!-- floating spheres -->
+  <circle cx="844" cy="416" r="34" fill="url(#peach)" stroke="#FFFFFF" filter="url(#sm)"/>
+  <circle cx="1156" cy="188" r="21" fill="url(#mint)" stroke="#FFFFFF" filter="url(#sm)"/>
+  <circle cx="1150" cy="468" r="13" fill="url(#clay)" stroke="#FFFFFF"/>
+  <!-- tiny dotted texture -->
+  <g fill="#4C3E94" opacity="0.18">
+    <circle cx="846" cy="96" r="3"/><circle cx="866" cy="96" r="3"/><circle cx="886" cy="96" r="3"/>
+    <circle cx="846" cy="116" r="3"/><circle cx="866" cy="116" r="3"/><circle cx="886" cy="116" r="3"/>
+  </g>
+  <!-- eyebrow pill background -->
+  <rect x="78" y="86" width="304" height="46" rx="23" fill="#ECE8FF"/>
+  <circle cx="104" cy="109" r="5" fill="#6C58E3"/>
+  <!-- brand mark -->
+  <g>
+    <rect x="78" y="42" width="46" height="46" rx="15" fill="#FFFEFA" stroke="#E8E5DC"/>
+    <rect x="86" y="50" width="14" height="14" rx="4" fill="#D5F4E5"/>
+    <rect x="104" y="50" width="14" height="14" rx="4" fill="#FFE0D0"/>
+    <rect x="86" y="68" width="14" height="14" rx="4" fill="#D5E8FF"/>
+    <rect x="104" y="68" width="14" height="14" rx="4" fill="#20212B"/>
+    <circle cx="111" cy="75" r="2" fill="#F7F6F2"/>
+  </g>
+  <!-- underline -->
+  <path d="M80 394 C 190 378, 330 380, 468 388" stroke="#E9B58F" stroke-width="9" fill="none" stroke-linecap="round"/>
+  <!-- footer rule -->
+  <line x1="80" y1="552" x2="700" y2="552" stroke="#20212B" stroke-opacity="0.1"/>
+
+  <!-- typography -->
+  <text x="138" y="73" font-family="Bricolage Grotesque" font-weight="600" font-size="25" fill="#20212B" letter-spacing="-0.5">Random Tech</text>
+  <text x="118" y="111" font-family="JetBrains Mono" font-weight="600" font-size="13" fill="#4A35C0" letter-spacing="2.2">YOUR NEXT 15 MINUTES START HERE</text>
+  <text x="74" y="272" font-family="Bricolage Grotesque" font-weight="700" font-size="102" fill="#20212B" letter-spacing="-5.5">Discover</text>
+  <text x="74" y="374" font-family="Bricolage Grotesque" font-weight="700" font-size="102" fill="#4A35C0" letter-spacing="-5.5">What Matters.</text>
+  <text x="80" y="445" font-family="DM Sans" font-weight="400" font-size="25" fill="#4B4C58">One random topic. Fifteen minutes of research.</text>
+  <text x="80" y="481" font-family="DM Sans" font-weight="400" font-size="25" fill="#4B4C58">A stronger technical mind.</text>
+  <text x="80" y="592" font-family="JetBrains Mono" font-weight="600" font-size="13" fill="#666775" letter-spacing="1.2">__CONTENT__   ·   39 FIELDS   ·   NO ACCOUNT NEEDED</text>
+  <text x="922" y="179" font-family="DM Sans" font-weight="600" font-size="16" fill="#2C2D3A">Consensus</text>
+  <text x="1016" y="512" font-family="JetBrains Mono" font-weight="600" font-size="12" fill="#DCD6FF" letter-spacing="1.8">15 MIN</text>
+  <text x="990" y="551" font-family="Bricolage Grotesque" font-weight="600" font-size="16" fill="#F7F6F2">One powerful idea</text>
+
+</svg>
