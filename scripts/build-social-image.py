@@ -19,6 +19,9 @@ count_line = (
     f"{library['counts']['categories']} FIELDS   ·   NO ACCOUNT NEEDED"
 )
 svg = template.replace("__CONTENT__", count_line)
+icon = (root / "content" / "icon.svg").read_text()
+(root / ".cache" / "icon.svg").write_text(icon)
+
 target = root / ".cache" / "og.svg"
 target.parent.mkdir(exist_ok=True)
 target.write_text(svg)
@@ -34,6 +37,12 @@ const resvg = new Resvg(svg, {{
   font: {{ loadSystemFonts: false, fontFiles: {json.dumps([str(f) for f in fonts])} }},
 }});
 fs.writeFileSync({json.dumps(str(root / 'public' / 'og-image.png'))}, resvg.render().asPng());
+
+const iconSvg = fs.readFileSync({json.dumps(str(root / '.cache' / 'icon.svg'))}, 'utf8');
+for (const [size, file] of [[180, 'apple-touch-icon.png'], [512, 'icon-512.png']]) {{
+  const icon = new Resvg(iconSvg, {{ fitTo: {{ mode: 'width', value: size }} }});
+  fs.writeFileSync({json.dumps(str(root / 'public'))} + '/' + file, icon.render().asPng());
+}}
 """
 subprocess.run(["node", "--input-type=commonjs", "-e", script], check=True, cwd=root)
-print(f"Rendered public/og-image.png ({library['counts']['topics']} topics)")
+print(f"Rendered public/og-image.png + app icons ({library['counts']['topics']} topics)")

@@ -27,5 +27,14 @@ export function usePageMeta(title: string, description?: string) {
     document.title = title === SITE ? `${SITE} — Discover What Matters` : `${title} · ${SITE}`;
     if (description) setMetaDescription(description);
     setCanonical(window.location.pathname);
+    const ogUrl = document.querySelector<HTMLMetaElement>('meta[property="og:url"]');
+    if (!ogUrl) {
+      const tag = document.createElement('meta');
+      tag.setAttribute('property', 'og:url');
+      document.head.appendChild(tag);
+      tag.content = window.location.href;
+    } else {
+      ogUrl.content = window.location.href;
+    }
   }, [title, description]);
 }

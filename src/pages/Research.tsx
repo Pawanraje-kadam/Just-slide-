@@ -33,6 +33,14 @@ function formatTime(seconds: number): string {
   return `${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}`;
 }
 
+function spokenTime(totalSeconds: number): string {
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+  const minutesLabel = `${minutes} minute${minutes === 1 ? '' : 's'}`;
+  if (seconds === 0) return minutesLabel;
+  return `${minutesLabel} ${seconds} second${seconds === 1 ? '' : 's'}`;
+}
+
 function isCheckArray(value: unknown): value is boolean[] {
   return (
     Array.isArray(value) &&
@@ -343,7 +351,11 @@ function RitualSession({ topic }: { topic: Topic }) {
                 />
               </svg>
               <div className="timer-ring__center">
-                <span className="timer-value" aria-hidden="true">
+                <span
+                  className="timer-value"
+                  role="timer"
+                  aria-label={`${spokenTime(remaining)} remaining`}
+                >
                   {formatTime(remaining)}
                 </span>
                 <span className="timer-label">

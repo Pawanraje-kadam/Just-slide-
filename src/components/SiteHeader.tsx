@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useTheme } from '../providers/ThemeProvider';
 import { useSaved } from '../providers/SavedProvider';
@@ -16,6 +16,7 @@ export function SiteHeader() {
   const { resolved, toggleTheme } = useTheme();
   const { savedIds } = useSaved();
   const location = useLocation();
+  const headerRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -26,12 +27,21 @@ export function SiteHeader() {
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setMenuOpen(false);
     };
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (target instanceof Node && headerRef.current?.contains(target)) return;
+      setMenuOpen(false);
+    };
     window.addEventListener('keydown', onKeyDown);
-    return () => window.removeEventListener('keydown', onKeyDown);
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => {
+      window.removeEventListener('keydown', onKeyDown);
+      document.removeEventListener('pointerdown', onPointerDown);
+    };
   }, [menuOpen]);
 
   return (
-    <header className="site-header">
+    <header className="site-header" ref={headerRef}>
       <div className="container">
         <nav className="nav-shell" aria-label="Primary">
           <Logo />

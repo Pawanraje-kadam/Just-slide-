@@ -70,6 +70,24 @@ export const searchableText = new Map<string, string>(
   ]),
 );
 
+/**
+ * Token index used by search. Each entry keeps full hyphenated words (so a tag such
+ * as `bloom-filters` is searchable) plus their parts (so `filters` also works).
+ */
+const searchTokens = new Map<string, string[]>(
+  [...searchableText.entries()].map(([id, text]) => {
+    const words = text.split(/[^a-z0-9-]+/).filter(Boolean);
+    const expanded = new Set<string>();
+    for (const word of words) {
+      expanded.add(word);
+      if (word.includes('-')) {
+        for (const part of word.split('-')) if (part) expanded.add(part);
+      }
+    }
+    return [id, [...expanded]];
+  }),
+);
+
 export function normalizeQuery(input: string): string[] {
   return input
     .toLowerCase()
@@ -99,8 +117,8 @@ export function filterTopics(options: SearchOptions): Topic[] {
     if (options.difficulty !== 'Any' && topic.difficulty !== options.difficulty) return;
     if (options.aiOnly && !topic.aiRelevance) return;
 
-    const haystack = searchableText.get(topic.id) ?? topic.title.toLowerCase();
-    if (!terms.every((term) => haystack.includes(term))) return;
+    const tokens = searchTokens.get(topic.id) ?? normalizeQuery(topic.title);
+    if (!terms.every((term) => tokens.some((token) => token.startsWith(term)))) return;
 
     let score = 0;
     if (terms.length) {

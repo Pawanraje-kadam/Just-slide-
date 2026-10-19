@@ -80,7 +80,7 @@ export function Explore() {
   };
 
   const openTopic = (topic: Topic) => updateParam('topic', topic.id);
-  const closeTopic = () => updateParam('topic', null);
+  const closeTopic = () => updateParam('topic', null, true);
 
   return (
     <>

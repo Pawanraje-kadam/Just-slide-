@@ -4443,7 +4443,7 @@
       "aiRelevance": false,
       "emerging": false,
       "summary": "Adding machines helps until coordination, data transfer, and operational complexity dominate the cost of the work being distributed.",
-      "whyItMatters": "Not every bottleneck is solved by more capacity.",
+      "whyItMatters": "Capacity is only cheaper than optimization up to a point; beyond it, coordination and data-transfer costs decide whether scaling pays off.",
       "researchQuestion": "Which costs grow with the number of nodes rather than the amount of useful work?",
       "tags": [
         "scaling",
@@ -4487,7 +4487,7 @@
       "aiRelevance": false,
       "emerging": false,
       "summary": "The number of communication paths grows roughly quadratically with team count, so coordination overhead can outpace individual productivity.",
-      "whyItMatters": "Organizational design is an architectural force.",
+      "whyItMatters": "Org structure shapes the architecture that is possible; teams that cannot communicate cheaply cannot build tightly coupled systems well.",
       "researchQuestion": "How would you structure teams to reduce necessary cross-team communication?",
       "tags": [
         "team-topology",
@@ -6731,7 +6731,7 @@
       "aiRelevance": false,
       "emerging": false,
       "summary": "The first session establishes whether users reach value before encountering friction. Clear first steps and fast wins predict later retention.",
-      "whyItMatters": "Acquisition becomes waste if activation fails.",
+      "whyItMatters": "Acquisition spend is wasted when first-session friction prevents users from ever reaching the value they signed up for.",
       "researchQuestion": "What is the shortest path from sign-up to the first meaningful outcome?",
       "tags": [
         "onboarding",
@@ -7149,7 +7149,7 @@
       "aiRelevance": false,
       "emerging": false,
       "summary": "Policy gradients estimate expected reward from sampled trajectories, which can be noisy and high-variance. Baselines and advantage estimates reduce variance.",
-      "whyItMatters": "High variance makes learning slow and unstable.",
+      "whyItMatters": "Noisy gradient estimates make training slow and unstable; variance reduction is what turns a plausible objective into a usable algorithm.",
       "researchQuestion": "How does subtracting a baseline leave the policy gradient unbiased?",
       "tags": [
         "policy-gradient",

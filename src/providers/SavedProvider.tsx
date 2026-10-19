@@ -93,24 +93,17 @@ export function SavedProvider({ children }: { children: ReactNode }) {
     (topicId: string): boolean => {
       const exists = savedIds.includes(topicId);
       persistIds(exists ? savedIds.filter((id) => id !== topicId) : [topicId, ...savedIds]);
-      if (exists) {
-        const nextNotes = { ...notes };
-        delete nextNotes[topicId];
-        persistNotes(nextNotes);
-      }
+      // Reflections are the reader's own work; unsaving a topic never deletes them.
       return !exists;
     },
-    [savedIds, notes, persistIds, persistNotes],
+    [savedIds, persistIds],
   );
 
   const removeSaved = useCallback(
     (topicId: string) => {
       persistIds(savedIds.filter((id) => id !== topicId));
-      const nextNotes = { ...notes };
-      delete nextNotes[topicId];
-      persistNotes(nextNotes);
     },
-    [savedIds, notes, persistIds, persistNotes],
+    [savedIds, persistIds],
   );
 
   const saveNote = useCallback(

@@ -29,6 +29,8 @@ fifteen minutes of independent research.
 - **The 15-minute ritual** — focused research mode with an optional start/pause/resume/reset
   timer, five-step checklist with persisted progress, session completion, reflection
   prompts, and a saved note.
+- **Library standard** — a dedicated page documenting the ten editorial rules, what the
+  library excludes, and why the shipped count is 358 rather than a fabricated 10,000.
 - **Design system** — a claymorphic visual language built from layered shadows, inset
   highlights, pillowy surfaces, pastel tint families, tactile pressed states, custom SVG
   clay illustration, and a hand-built dark theme. No UI framework, no glassmorphism.
@@ -55,6 +57,7 @@ npm run build      # library check + typecheck + production build
 npm run preview    # serve dist/
 npm run test       # vitest
 npm run library:check
+npm run social:build   # re-render the social card after a content batch
 ```
 
 For a production host, configure an SPA fallback that serves `index.html` for unknown
@@ -69,7 +72,7 @@ content/                 source of truth for the topic library
   fonts/                 subset OFL fonts used by the social-image renderer
 scripts/
   build-library.mjs      validation + deduplication + dataset/count generation
-  build-social-image.py  renders public/og-image.png from the live counts
+  build-social-image.py  renders public/og-image.png + app icons from live counts
 src/
   data/library.json      generated runtime dataset (do not hand-edit)
   lib/library.ts         single data-access seam: topics, categories, search, related

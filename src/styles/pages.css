@@ -30,9 +30,9 @@
 
 .hero-title {
   margin-bottom: 1.35rem;
-  font-size: clamp(3.5rem, 6.6vw, 6.1rem);
+  font-size: clamp(3.4rem, 6.2vw, 5.7rem);
   font-weight: 700;
-  line-height: 0.9;
+  line-height: 0.92;
   letter-spacing: -0.058em;
 }
 
@@ -213,6 +213,18 @@
   z-index: 1;
   width: 100%;
   height: 100%;
+}
+
+.art-lines {
+  overflow: visible;
+}
+
+.art-lines circle {
+  fill: rgba(64, 51, 124, 0.38);
+}
+
+[data-theme='dark'] .art-lines circle {
+  fill: rgba(220, 214, 255, 0.35);
 }
 
 .art-lines path {

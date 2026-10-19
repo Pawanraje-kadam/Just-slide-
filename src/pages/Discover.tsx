@@ -244,10 +244,14 @@ export function Discover() {
           <div className="art-stage">
             <div className="art-panel">
               <svg className="art-lines" viewBox="0 0 420 420" fill="none" aria-hidden="true">
-                <path d="M95 118C160 155 190 185 210 210" />
-                <path d="M326 128C275 160 238 186 210 210" />
-                <path d="M115 318C161 281 190 246 210 210" />
-                <path d="M318 314C278 276 238 244 210 210" />
+                <path d="M34 40C108 96 174 160 210 210" />
+                <path d="M386 62C302 120 246 170 210 210" />
+                <path d="M36 300C110 265 174 236 210 210" />
+                <path d="M384 318C302 270 246 236 210 210" />
+                <circle cx="34" cy="40" r="3.4" />
+                <circle cx="386" cy="62" r="3.4" />
+                <circle cx="36" cy="300" r="3.4" />
+                <circle cx="384" cy="318" r="3.4" />
               </svg>
               <span className="art-orbit art-orbit--one" />
               <span className="art-orbit art-orbit--two" />
