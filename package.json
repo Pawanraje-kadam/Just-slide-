@@ -1,0 +1,33 @@
+{
+  "name": "random-tech",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run library:build && tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "library:build": "node scripts/build-library.mjs",
+    "library:check": "node scripts/build-library.mjs --check",
+    "social:build": "python3 scripts/build-social-image.py"
+  },
+  "dependencies": {
+    "@fontsource/bricolage-grotesque": "^5.3.0",
+    "@fontsource/dm-sans": "^5.3.0",
+    "@fontsource/jetbrains-mono": "^5.3.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.6.0"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.4.0",
+    "typescript": "^5.8.0",
+    "vite": "^7.0.0",
+    "vitest": "^5.0.5"
+  }
+}

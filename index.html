@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#F7F6F2" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#171821" media="(prefers-color-scheme: dark)" />
+    <script>
+      (function () {
+        try {
+          var stored = JSON.parse(localStorage.getItem('rt.theme.v1') || '"system"');
+          var dark =
+            stored === 'dark' ||
+            (stored === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+          document.documentElement.style.colorScheme = dark ? 'dark' : 'light';
+        } catch (error) {}
+      })();
+    </script>
+    <title>Random Tech — Discover What Matters</title>
+    <meta
+      name="description"
+      content="One random topic. Fifteen minutes of research. A stronger technical mind. Curated computer science topics worth understanding in the AI era."
+    />
+    <meta name="application-name" content="Random Tech" />
+    <meta name="robots" content="index, follow" />
+    <meta name="author" content="Random Tech" />
+    <meta property="og:locale" content="en_US" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Random Tech — Discover What Matters" />
+    <meta property="og:title" content="Random Tech — Discover What Matters" />
+    <meta
+      property="og:description"
+      content="Curated computer science topics for engineers who want depth, not another feed. Generate a topic, research it for 15 minutes, keep what you learn."
+    />
+    <meta property="og:site_name" content="Random Tech" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content="/og-image.png" />
+    <meta name="twitter:title" content="Random Tech — Discover What Matters" />
+    <meta
+      name="twitter:description"
+      content="One random topic. Fifteen minutes of research. A stronger technical mind."
+    />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" sizes="512x512" href="/icon-512.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Random Tech",
+        "description": "One random topic. Fifteen minutes of research. A stronger technical mind.",
+        "inLanguage": "en"
+      }
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>
+      <div style="max-width: 34rem; margin: 4rem auto; padding: 2rem; font-family: system-ui, sans-serif; line-height: 1.6;">
+        <h1 style="font-size: 1.6rem; margin: 0 0 0.75rem;">Random Tech needs JavaScript</h1>
+        <p style="margin: 0; color: #555;">
+          The topic generator, search, and research timer all run in your browser. Enable
+          JavaScript to start a fifteen-minute session.
+        </p>
+      </div>
+    </noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
