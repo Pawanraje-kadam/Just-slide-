@@ -13,8 +13,9 @@ fifteen minutes of independent research.
 ## What is implemented
 
 - **The Draw** — an instant, category-balanced random generator with optional field,
-  collection, and difficulty tuning. It avoids recently seen topics, remembers a 20-topic
-  history, animates card reveals, and never waits on a network request.
+  collection, and difficulty tuning. A topic is waiting on first paint, so the draw section
+  never repeats the hero's call to action; it avoids recently seen topics, remembers a
+  20-topic history, animates card reveals, and never waits on a network request.
 - **Curated library** — 358 topics across the 39 required taxonomy areas, each with a
   category, sub-field, difficulty, summary, why-it-matters explanation, research question,
   tags, and AI-era classification. Data is generated from reviewed authoring files, not
@@ -25,10 +26,13 @@ fifteen minutes of independent research.
   scored by real category and tag overlap.
 - **Saved shelf** — bookmark topics without an account. Saved IDs and reflections live in
   `localStorage`, degrade to in-memory storage when unavailable, and notify the user when
-  persistence is not possible.
-- **The 15-minute ritual** — focused research mode with an optional start/pause/resume/reset
-  timer, five-step checklist with persisted progress, session completion, reflection
-  prompts, and a saved note.
+  persistence is not possible. A compact progress strip tracks finished sessions, written
+  reflections, and a day streak without turning learning into a leaderboard.
+- **The 15-minute ritual** — a guided four-step session: read the brief, research and
+  capture sources, write an answer to the research question, then keep one takeaway.
+  Includes an optional start/pause/resume/reset timer, five research moves, source links,
+  autosaved drafts, explicit session completion, and a saved reflection. Finishing records
+  the session and adds the topic to the shelf; copying is never gated.
 - **Library standard** — a dedicated page documenting the ten editorial rules, what the
   library excludes, and why the shipped count is 358 rather than a fabricated 10,000.
 - **Design system** — a claymorphic visual language built from layered shadows, inset
@@ -45,8 +49,9 @@ fifteen minutes of independent research.
 ## Stack
 
 React 19 · TypeScript · Vite 7 · React Router 7 · hand-authored CSS design tokens.
-Vitest covers dataset integrity, search/filter behavior, draw fairness, and related-topic
-scoring. No backend is required for this version.
+Vitest covers dataset integrity, search/filter behavior, draw fairness, related-topic
+scoring, session persistence and migration, source parsing, and streak math. No backend is
+required for this version.
 
 ## Run it
 
@@ -60,8 +65,22 @@ npm run library:check
 npm run social:build   # re-render the social card after a content batch
 ```
 
-For a production host, configure an SPA fallback that serves `index.html` for unknown
-paths (`/explore`, `/research/:id`, `/saved`) so deep links resolve.
+## Deploy
+
+The app is a client-routed SPA. The host must serve `index.html` for client routes so
+`/explore`, `/saved`, `/standard`, and `/research/:id` work when opened directly.
+
+- **Vercel** — zero-config with the committed `vercel.json` (`framework: vite`, a catch-all
+  rewrite to `index.html`). Import the repository and deploy; no dashboard rewrites needed.
+- **Netlify / Cloudflare Pages** — `public/_redirects` ships `/* /index.html 200`, which is
+  copied into `dist/` at build time.
+- **Any static host** — use the same fallback rule: serve existing files as-is, otherwise
+  return `index.html` with a 200. On GitHub Pages, either deploy with an SPA fallback
+  action or use a `404.html` redirect that preserves the requested path.
+- Build command `npm run build`, output directory `dist`.
+
+A quick check after deploying: open `/explore`, `/standard`, and a `/research/<id>` link in
+a fresh tab. All three should render the app rather than a host 404 page.
 
 ## Architecture
 
@@ -78,9 +97,11 @@ src/
   lib/library.ts         single data-access seam: topics, categories, search, related
   lib/selection.ts       draw engine: collection filters, balanced category sampling
   lib/storage.ts         guarded localStorage with in-memory fallback
+  lib/ritual.ts          session draft, timer restore, source parsing
+  lib/progress.ts        completion ledger, day streak, weekly count
   lib/clipboard.ts       secure-context clipboard with legacy fallback
   lib/meta.ts            per-route title, description, canonical
-  providers/             theme, toasts, saved topics + reflections
+  providers/             theme, toasts, saved topics + reflections, learning progress
   components/            layout, navigation, topic cards, dialog, icons, controls
   pages/                 Discover, Explore, Saved, Research, 404
   styles/                tokens, components, pages, library, responsive, motion

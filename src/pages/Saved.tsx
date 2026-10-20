@@ -4,6 +4,7 @@ import { Icon } from '../components/Icons';
 import { TopicDetailModal } from '../components/TopicDetailModal';
 import { TopicGridCard } from '../components/TopicGridCard';
 import { usePageMeta } from '../lib/meta';
+import { useProgress } from '../providers/ProgressProvider';
 import { useSaved } from '../providers/SavedProvider';
 import type { Topic } from '../types';
 
@@ -13,7 +14,9 @@ export function Saved() {
     'Your personal shelf of curated computer science topics. Saved locally in your browser.',
   );
 
-  const { savedTopics, getNote } = useSaved();
+  const { savedTopics, getNote, notes } = useSaved();
+  const { completedCount, weekCount, streak, isComplete } = useProgress();
+  const noteCount = Object.values(notes).filter((note) => note.text.trim().length > 0).length;
   const [activeTopic, setActiveTopic] = useState<Topic | null>(null);
   const [lastDrawn, setLastDrawn] = useState<string | null>(null);
 
@@ -89,6 +92,31 @@ export function Saved() {
           </div>
         ) : (
           <>
+            <section className="progress-strip" aria-label="Your learning progress">
+              <div className="progress-stat">
+                <span className="progress-stat__value">{savedTopics.length}</span>
+                <span className="progress-stat__label">Saved</span>
+              </div>
+              <div className="progress-stat">
+                <span className="progress-stat__value">{completedCount}</span>
+                <span className="progress-stat__label">Sessions finished</span>
+              </div>
+              <div className="progress-stat">
+                <span className="progress-stat__value">{noteCount}</span>
+                <span className="progress-stat__label">Reflections</span>
+              </div>
+              <div className="progress-stat">
+                <span className="progress-stat__value">{streak}</span>
+                <span className="progress-stat__label">Day streak</span>
+              </div>
+              <p className="progress-strip__note">
+                <Icon name="info" size={13} />
+                {weekCount > 0
+                  ? `${weekCount} session${weekCount === 1 ? '' : 's'} finished in the last seven days. No goal to hit — just evidence you were here.`
+                  : 'Finish a session to start a quiet record of what you have learned.'}
+              </p>
+            </section>
+
             <div className="saved-note-row">
               <p>
                 <Icon name="info" size={14} />
@@ -103,6 +131,7 @@ export function Saved() {
                   topic={topic}
                   onOpen={setActiveTopic}
                   note={getNote(topic.id)?.text}
+                  completed={isComplete(topic.id)}
                 />
               ))}
             </div>

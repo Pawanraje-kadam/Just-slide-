@@ -11,6 +11,7 @@ import {
   topicById,
 } from '../lib/library';
 import { usePageMeta } from '../lib/meta';
+import { useProgress } from '../providers/ProgressProvider';
 import { useSaved } from '../providers/SavedProvider';
 import type { Difficulty, DifficultyFilter, Topic } from '../types';
 
@@ -31,6 +32,7 @@ export function Explore() {
 
   const [searchParams, setSearchParams] = useSearchParams();
   const { getNote } = useSaved();
+  const { isComplete } = useProgress();
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
 
   const query = searchParams.get('q') ?? '';
@@ -313,6 +315,7 @@ export function Explore() {
                   topic={topic}
                   onOpen={openTopic}
                   note={getNote(topic.id)?.text}
+                  completed={isComplete(topic.id)}
                 />
               ))}
             </div>

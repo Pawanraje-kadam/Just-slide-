@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { ProgressProvider } from './providers/ProgressProvider';
 import { SavedProvider } from './providers/SavedProvider';
 import { ThemeProvider } from './providers/ThemeProvider';
 import { ToastProvider } from './providers/ToastProvider';
@@ -16,11 +17,13 @@ createRoot(container).render(
     <BrowserRouter>
       <ThemeProvider>
         <ToastProvider>
-          <SavedProvider>
-            <ErrorBoundary>
-              <App />
-            </ErrorBoundary>
-          </SavedProvider>
+          <ProgressProvider>
+            <SavedProvider>
+              <ErrorBoundary>
+                <App />
+              </ErrorBoundary>
+            </SavedProvider>
+          </ProgressProvider>
         </ToastProvider>
       </ThemeProvider>
     </BrowserRouter>

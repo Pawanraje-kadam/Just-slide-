@@ -11,9 +11,10 @@ interface TopicGridCardProps {
   topic: Topic;
   onOpen: (topic: Topic) => void;
   note?: string;
+  completed?: boolean;
 }
 
-export function TopicGridCard({ topic, onOpen, note }: TopicGridCardProps) {
+export function TopicGridCard({ topic, onOpen, note, completed }: TopicGridCardProps) {
   const category = categoryFor(topic);
   const { isSaved, toggleSaved } = useSaved();
   const { notify } = useToast();
@@ -79,9 +80,15 @@ export function TopicGridCard({ topic, onOpen, note }: TopicGridCardProps) {
         )}
 
         <div className="topic-tile__footer">
-          <span className="tile-read">
-            Read the brief <Icon name="arrowUpRight" size={14} />
-          </span>
+          {completed ? (
+            <span className="tile-read tile-read--complete">
+              <Icon name="check" size={13} /> Completed
+            </span>
+          ) : (
+            <span className="tile-read">
+              Read the brief <Icon name="arrowUpRight" size={14} />
+            </span>
+          )}
           <CopyButton
             text={topic.title}
             label={`Copy ${topic.title}`}

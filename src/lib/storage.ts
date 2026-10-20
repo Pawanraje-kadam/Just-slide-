@@ -72,4 +72,6 @@ export const storageKeys = {
   drawCollection: 'rt.draw.collection.v1',
   drawDifficulty: 'rt.draw.difficulty.v1',
   checklist: (topicId: string) => `rt.ritual.${topicId}.v1`,
+  session: (topicId: string) => `rt.session.${topicId}.v1`,
+  progress: 'rt.progress.v1',
 } as const;

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
 import { categoryFor, relatedTopics, topicNumber } from '../lib/library';
+import { useProgress } from '../providers/ProgressProvider';
 import { useSaved } from '../providers/SavedProvider';
 import { useToast } from '../providers/ToastProvider';
 import type { Topic } from '../types';
@@ -20,6 +21,7 @@ export function TopicDetailModal({ topic, onClose, onSelectTopic }: TopicDetailM
   const dialogRef = useRef<HTMLDivElement>(null);
   const returnFocusRef = useRef<HTMLElement | null>(null);
   const { isSaved, toggleSaved, getNote } = useSaved();
+  const { isComplete } = useProgress();
   const { notify } = useToast();
   const open = Boolean(topic);
   const onCloseRef = useRef(onClose);
@@ -135,6 +137,11 @@ export function TopicDetailModal({ topic, onClose, onSelectTopic }: TopicDetailM
             </span>
             {topic.aiRelevance && <span className="micro-badge">AI-era relevant</span>}
             {topic.emerging && <span className="micro-badge micro-badge--mint">Emerging area</span>}
+            {isComplete(topic.id) && (
+              <span className="micro-badge micro-badge--mint">
+                <Icon name="check" size={12} /> Completed
+              </span>
+            )}
           </div>
 
           <h2 id="topic-modal-title" className="topic-modal__title">
