@@ -607,8 +607,9 @@ export function Discover() {
             <Icon name="shield" size={17} />
           </span>
           <p>
-            <strong>Reviewed, not generated.</strong> Every question is written and checked against
-            ten editorial rules. No crawler, no AI call, no duplicated filler.
+            <strong>Reviewed, not generated.</strong> Every question is written and reviewed against
+            ten editorial rules; new batches ship with each release. No crawler, no AI call, no
+            duplicated filler.
           </p>
           <div className="curation-strip__facts">
             <span>
