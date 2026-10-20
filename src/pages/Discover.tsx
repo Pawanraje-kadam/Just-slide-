@@ -21,6 +21,7 @@ import {
   matchesCollection,
 } from '../lib/selection';
 import { readJSON, storageKeys, writeJSON } from '../lib/storage';
+import { useProgress } from '../providers/ProgressProvider';
 import { useSaved } from '../providers/SavedProvider';
 import { useToast } from '../providers/ToastProvider';
 import type { Category, CollectionValue, DifficultyFilter, Topic } from '../types';
@@ -61,7 +62,7 @@ export function Discover() {
   const { notify } = useToast();
   const navigate = useNavigate();
   const { isSaved, toggleSaved } = useSaved();
-  const [current, setCurrent] = useState<Topic | null>(null);
+  const { isComplete } = useProgress();
   const [recentIds, setRecentIds] = useState<string[]>(() =>
     readJSON<string[]>(storageKeys.history, [], isHistory)
       .filter((id) => topicById.has(id))
@@ -72,6 +73,11 @@ export function Discover() {
   );
   const [difficulty, setDifficulty] = useState<DifficultyFilter>(() =>
     readJSON<DifficultyFilter>(storageKeys.drawDifficulty, 'Any', isDifficultyFilter),
+  );
+  // A topic is waiting from the first paint, so the draw section never duplicates
+  // the hero's call to action. It is not written to history until it is drawn again.
+  const [current, setCurrent] = useState<Topic | null>(() =>
+    drawTopic({ collection, difficulty }),
   );
   const [tuningOpen, setTuningOpen] = useState(false);
   const [drawError, setDrawError] = useState('');
@@ -89,6 +95,13 @@ export function Discover() {
       writeJSON(storageKeys.history, next);
       return next;
     });
+  }, []);
+
+  // The pre-drawn topic counts as seen, so it is not repeated after a reload.
+  useEffect(() => {
+    if (current) remember(current);
+    // Only on mount: later draws remember themselves.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const scrollToGenerator = useCallback(() => {
@@ -455,7 +468,7 @@ export function Discover() {
                     <CategoryGlyph category={currentCategory} size="sm" />
                     {current.category}
                   </span>
-                  <span className="generated-top__label">Curated topic · Evergreen</span>
+                  <span className="generated-top__label">Human-reviewed · Evergreen</span>
                 </div>
 
                 <div className="generated-main">
@@ -474,6 +487,11 @@ export function Discover() {
                         {current.aiRelevance ? 'AI-era relevant' : 'Durable relevance'}
                       </span>
                       {current.emerging && <span className="micro-badge">Emerging area</span>}
+                      {isComplete(current.id) && (
+                        <span className="micro-badge micro-badge--mint">
+                          <Icon name="check" size={12} /> Completed
+                        </span>
+                      )}
                     </div>
 
                     <div className="why-block">
@@ -511,7 +529,7 @@ export function Discover() {
 
                     <div className="generated-subactions">
                       <Link to={`/research/${current.id}`} className="text-action">
-                        <Icon name="timer" size={15} /> Start the 15-minute ritual
+                        <Icon name="timer" size={15} /> Start the guided 15-minute session
                       </Link>
                       <CopyButton
                         text={`${current.title}\n\nResearch question: ${current.researchQuestion}`}
@@ -584,6 +602,31 @@ export function Discover() {
           </div>
         </div>
 
+        <aside className="curation-strip" aria-label="How the library is curated">
+          <span className="curation-strip__icon" aria-hidden="true">
+            <Icon name="shield" size={17} />
+          </span>
+          <p>
+            <strong>Reviewed, not generated.</strong> Every question is written and reviewed against
+            ten editorial rules; new batches ship with each release. No crawler, no AI call, no
+            duplicated filler.
+          </p>
+          <div className="curation-strip__facts">
+            <span>
+              <Icon name="check" size={12} /> Human-reviewed
+            </span>
+            <span>
+              <Icon name="listCheck" size={12} /> 10 rules
+            </span>
+            <span>
+              <Icon name="package" size={12} /> Versioned batches
+            </span>
+          </div>
+          <Link to="/standard" className="curation-strip__link">
+            Read the standard <Icon name="arrowRight" size={14} />
+          </Link>
+        </aside>
+
         {recentTopics.length > 0 && (
           <div className="recent-draws">
             <span className="recent-draws__label">Recently drawn</span>
@@ -614,8 +657,8 @@ export function Discover() {
             </p>
             <h2 id="ritual-heading">Fifteen minutes. One powerful idea.</h2>
             <p>
-              The internet rewards you for scrolling. This is the opposite. Research it
-              yourself, then explain it back — that is where the understanding sticks.
+              The internet rewards you for scrolling. This is the opposite: read the brief, keep
+              your sources, answer the research question, and save one takeaway.
             </p>
             <button type="button" className="btn btn--primary" onClick={startRitual}>
               <Icon name="play" size={16} />
@@ -640,15 +683,15 @@ export function Discover() {
                 <Icon name="search" size={20} />
               </span>
               <h3>Research the mechanism</h3>
-              <p>Define it, trace how it works, and find one limitation or trade-off.</p>
+              <p>Keep the sources you use. Define the mechanism, then find one limitation or trade-off.</p>
             </li>
             <li className="ritual-step">
               <span className="ritual-step__number">03</span>
               <span className="ritual-step__glyph">
                 <Icon name="chat" size={20} />
               </span>
-              <h3>Explain it back</h3>
-              <p>Close the tabs. Say it in your own words, then keep a short note.</p>
+              <h3>Answer, then keep it</h3>
+              <p>Close the tabs. Answer the question in your own words and save one takeaway.</p>
             </li>
           </ol>
         </div>

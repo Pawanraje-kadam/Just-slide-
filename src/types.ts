@@ -70,7 +70,10 @@ export type IconName =
   | 'externalLink'
   | 'listCheck'
   | 'sparkSmall'
-  | 'timer';
+  | 'timer'
+  | 'plus'
+  | 'link'
+  | 'flag';
 
 export interface Topic {
   id: string;
@@ -118,4 +121,29 @@ export interface LibraryFilters {
 export interface SavedNote {
   text: string;
   updatedAt: string;
+}
+
+export interface RitualSource {
+  id: string;
+  label: string;
+  url?: string;
+  addedAt: string;
+}
+
+export interface RitualDraft {
+  checked: boolean[];
+  sources: RitualSource[];
+  answer: string;
+  learned: string;
+  remaining: number;
+  started: boolean;
+  endAt: number | null;
+  spentSeconds: number;
+  completedAt: string | null;
+  updatedAt: string;
+}
+
+export interface ProgressState {
+  completed: Record<string, string>;
+  activity: string[];
 }

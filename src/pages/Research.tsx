@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState, type FormEvent } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { CategoryGlyph } from '../components/CategoryGlyph';
 import { CopyButton } from '../components/CopyButton';
@@ -6,19 +6,24 @@ import { DifficultyMeter } from '../components/DifficultyMeter';
 import { Icon } from '../components/Icons';
 import { categoryFor, topicById } from '../lib/library';
 import { usePageMeta } from '../lib/meta';
-import { readJSON, storageKeys, writeJSON } from '../lib/storage';
+import {
+  RESEARCH_MOVES,
+  TOTAL_SECONDS,
+  formatTime,
+  loadDraft,
+  makeSourceId,
+  parseSource,
+  saveDraft,
+  sourceKey,
+  spokenTime,
+} from '../lib/ritual';
+import { useProgress } from '../providers/ProgressProvider';
 import { useSaved } from '../providers/SavedProvider';
 import { useToast } from '../providers/ToastProvider';
-import type { Topic } from '../types';
+import type { RitualDraft, RitualSource, Topic } from '../types';
 
-const TOTAL_SECONDS = 15 * 60;
-const checks = [
-  'Define the concept in your own words.',
-  'Understand how it actually works.',
-  'Identify one practical application.',
-  'Discover one limitation or trade-off.',
-  'Explain what you learned without your notes.',
-];
+const MIN_ANSWER = 40;
+const MIN_TAKEAWAY = 40;
 
 const prompts = [
   'What did you learn?',
@@ -26,28 +31,6 @@ const prompts = [
   'What remains unclear?',
   'Where might you use this knowledge?',
 ];
-
-function formatTime(seconds: number): string {
-  const minutes = Math.floor(seconds / 60);
-  const rest = seconds % 60;
-  return `${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}`;
-}
-
-function spokenTime(totalSeconds: number): string {
-  const minutes = Math.floor(totalSeconds / 60);
-  const seconds = totalSeconds % 60;
-  const minutesLabel = `${minutes} minute${minutes === 1 ? '' : 's'}`;
-  if (seconds === 0) return minutesLabel;
-  return `${minutesLabel} ${seconds} second${seconds === 1 ? '' : 's'}`;
-}
-
-function isCheckArray(value: unknown): value is boolean[] {
-  return (
-    Array.isArray(value) &&
-    value.length === checks.length &&
-    value.every((entry) => typeof entry === 'boolean')
-  );
-}
 
 export function Research() {
   const { topicId } = useParams();
@@ -83,31 +66,52 @@ function RitualSession({ topic }: { topic: Topic }) {
   const category = categoryFor(topic);
   const { notify } = useToast();
   const { getNote, saveNote, isSaved, toggleSaved } = useSaved();
+  const { markComplete } = useProgress();
 
-  const [remaining, setRemaining] = useState(TOTAL_SECONDS);
-  const [running, setRunning] = useState(false);
-  const [hasStarted, setHasStarted] = useState(false);
-  const [complete, setComplete] = useState(false);
-  const [checked, setChecked] = useState<boolean[]>(() =>
-    readJSON<boolean[]>(storageKeys.checklist(topic.id), checks.map(() => false), isCheckArray),
-  );
-  const [reflection, setReflection] = useState(() => getNote(topic.id)?.text ?? '');
-  const endAt = useRef<number | null>(null);
-  const reflectionRef = useRef<HTMLElement>(null);
-  const savedNote = getNote(topic.id);
+  const [draft, setDraft] = useState<RitualDraft>(() => {
+    const loaded = loadDraft(topic.id);
+    const savedNote = getNote(topic.id);
+    if (!loaded.learned && savedNote?.text) return { ...loaded, learned: savedNote.text };
+    return loaded;
+  });
+  const [remaining, setRemaining] = useState(draft.remaining);
+  const [running, setRunning] = useState(Boolean(draft.endAt));
+  const [sourceInput, setSourceInput] = useState('');
+  const endAt = useRef<number | null>(draft.endAt);
+  const remainingRef = useRef(draft.remaining);
+  const draftRef = useRef(draft);
+  const completionRef = useRef<HTMLDivElement>(null);
+  draftRef.current = draft;
 
+  // Autosave everything the reader writes, including a timer that is still running.
   useEffect(() => {
-    writeJSON(storageKeys.checklist(topic.id), checked);
-  }, [checked, topic.id]);
+    const timer = window.setTimeout(() => {
+      saveDraft(topic.id, { ...draft, remaining: remainingRef.current, endAt: endAt.current });
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [draft, topic.id]);
+
+  useEffect(
+    () => () => {
+      saveDraft(topic.id, {
+        ...draftRef.current,
+        remaining: remainingRef.current,
+        endAt: endAt.current,
+      });
+    },
+    [topic.id],
+  );
 
   useEffect(() => {
     if (!running) return;
     const tick = () => {
       const next = Math.max(0, Math.ceil(((endAt.current ?? Date.now()) - Date.now()) / 1000));
+      remainingRef.current = next;
       setRemaining(next);
       if (next === 0) {
         setRunning(false);
-        setComplete(true);
+        endAt.current = null;
+        setDraft((current) => ({ ...current, remaining: 0, endAt: null }));
       }
     };
     tick();
@@ -116,62 +120,135 @@ function RitualSession({ topic }: { topic: Topic }) {
   }, [running]);
 
   const start = () => {
-    if (remaining === 0) {
-      setRemaining(TOTAL_SECONDS);
-      endAt.current = Date.now() + TOTAL_SECONDS * 1000;
-    } else {
-      endAt.current = Date.now() + remaining * 1000;
-    }
-    setHasStarted(true);
+    const next = remaining === 0 ? TOTAL_SECONDS : remaining;
+    remainingRef.current = next;
+    endAt.current = Date.now() + next * 1000;
+    setRemaining(next);
     setRunning(true);
+    setDraft((current) => ({ ...current, started: true, remaining: next, endAt: endAt.current }));
   };
 
   const pause = () => {
-    if (endAt.current) {
-      setRemaining(Math.max(0, Math.ceil((endAt.current - Date.now()) / 1000)));
-    }
+    const next = endAt.current
+      ? Math.max(0, Math.ceil((endAt.current - Date.now()) / 1000))
+      : remaining;
+    remainingRef.current = next;
+    setRemaining(next);
     setRunning(false);
+    endAt.current = null;
+    setDraft((current) => ({ ...current, remaining: next, endAt: null }));
   };
 
   const reset = () => {
+    remainingRef.current = TOTAL_SECONDS;
     endAt.current = null;
     setRemaining(TOTAL_SECONDS);
     setRunning(false);
-    setHasStarted(false);
+    setDraft((current) => ({
+      ...current,
+      remaining: TOTAL_SECONDS,
+      started: false,
+      endAt: null,
+    }));
   };
 
-  const finish = () => {
-    setComplete(true);
-    setRunning(false);
-    window.setTimeout(() => {
-      reflectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }, 60);
+  const addSource = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const parsed = parseSource(sourceInput);
+    if (!parsed.label) return;
+    if (draft.sources.some((source) => sourceKey(source) === sourceKey(parsed))) {
+      notify('That source is already on your list.', 'info');
+      return;
+    }
+    const source: RitualSource = {
+      id: makeSourceId(),
+      label: parsed.label,
+      ...(parsed.url ? { url: parsed.url } : {}),
+      addedAt: new Date().toISOString(),
+    };
+    setDraft((current) => ({ ...current, sources: [...current.sources, source] }));
+    setSourceInput('');
+  };
+
+  const removeSource = (id: string) => {
+    setDraft((current) => ({
+      ...current,
+      sources: current.sources.filter((source) => source.id !== id),
+    }));
   };
 
   const toggleCheck = (index: number) => {
-    setChecked((current) => current.map((value, i) => (i === index ? !value : value)));
+    setDraft((current) => ({
+      ...current,
+      checked: current.checked.map((value, i) => (i === index ? !value : value)),
+    }));
   };
 
-  const handleSaveReflection = () => {
-    const text = reflection.trim();
-    if (!text) {
-      notify('Write a sentence or two before saving your reflection.', 'info');
+  const answerReady = draft.answer.trim().length >= MIN_ANSWER;
+  const learnedReady = draft.learned.trim().length >= MIN_TAKEAWAY;
+  const checkedCount = draft.checked.filter(Boolean).length;
+  const researchReady = draft.sources.length > 0 || checkedCount >= 3;
+  const complete = Boolean(draft.completedAt);
+
+  const finishSession = () => {
+    if (!answerReady || !learnedReady) {
+      notify('Add a short answer and one takeaway before closing the session.', 'info');
       return;
     }
-    saveNote(topic.id, text);
-    if (!isSaved(topic.id)) {
-      toggleSaved(topic.id);
-      notify('Reflection saved. Topic added to your shelf.', 'success');
-    } else {
-      notify('Reflection saved to this browser.', 'success');
-    }
+    const spent = draft.started ? Math.max(0, TOTAL_SECONDS - Math.min(remaining, TOTAL_SECONDS)) : 0;
+    const finished: RitualDraft = {
+      ...draft,
+      answer: draft.answer.trim(),
+      learned: draft.learned.trim(),
+      completedAt: new Date().toISOString(),
+      spentSeconds: spent,
+      remaining,
+      endAt: null,
+    };
+    endAt.current = null;
+    setRunning(false);
+    setDraft(finished);
+    saveDraft(topic.id, finished);
+    saveNote(topic.id, finished.learned);
+    if (!isSaved(topic.id)) toggleSaved(topic.id);
+    markComplete(topic.id);
+    notify('Session saved. Your answer, sources, and reflection stay in this browser.', 'success');
+    window.setTimeout(() => {
+      completionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }, 80);
   };
 
-  const checkedCount = checked.filter(Boolean).length;
-  const showComplete = complete && !running;
+  const steps = useMemo(
+    () => [
+      { id: 'step-brief', label: 'Read the brief', done: true, target: 'step-brief' },
+      {
+        id: 'step-research',
+        label: 'Research + sources',
+        done: researchReady,
+        target: 'step-research',
+      },
+      { id: 'step-answer', label: 'Write your answer', done: answerReady, target: 'step-answer' },
+      {
+        id: 'step-learned',
+        label: 'Keep what you learned',
+        done: learnedReady || complete,
+        target: 'step-learned',
+      },
+    ],
+    [researchReady, answerReady, learnedReady, complete],
+  );
+  const doneCount = steps.filter((step) => step.done).length;
+  const currentStep = steps.find((step) => !step.done)?.id;
+
+  const goToStep = (target: string) => {
+    const element = document.getElementById(target);
+    element?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
   const progress = 1 - remaining / TOTAL_SECONDS;
   const circumference = 2 * Math.PI * 88;
   const minutesLeft = Math.ceil(remaining / 60);
+  const showComplete = remaining === 0 && draft.started;
   const relatedHref = useMemo(
     () => `/explore?topic=${encodeURIComponent(topic.id)}`,
     [topic.id],
@@ -211,9 +288,9 @@ function RitualSession({ topic }: { topic: Topic }) {
           <span className="meta-pill">
             <Icon name="clock" size={14} /> {topic.estimatedMinutes} minutes
           </span>
-          {savedNote && (
+          {complete && (
             <span className="micro-badge micro-badge--mint">
-              <Icon name="check" size={12} /> Reflection saved
+              <Icon name="check" size={12} /> Session complete
             </span>
           )}
         </div>
@@ -221,120 +298,267 @@ function RitualSession({ topic }: { topic: Topic }) {
 
       <div className="ritual-layout">
         <article className="ritual-main">
-          <p className="ritual-summary">{topic.summary}</p>
+          <section id="step-brief" className="ritual-step-block" aria-labelledby="brief-heading">
+            <div className="ritual-step-block__head">
+              <span className={`step-index${currentStep === 'step-brief' ? ' is-current' : ''}`}>
+                01
+              </span>
+              <div>
+                <h2 id="brief-heading">Read the brief</h2>
+                <p>Get the shape of the idea. You do not need to understand it yet.</p>
+              </div>
+            </div>
 
-          <div className="detail-block detail-block--why">
-            <span className="detail-label">
-              <Icon name="bulb" size={14} /> Why it matters
-            </span>
-            <p>{topic.whyItMatters}</p>
-          </div>
+            <p className="ritual-summary">{topic.summary}</p>
 
-          <section className="research-question" aria-labelledby="research-question-heading">
-            <span className="research-question__icon" aria-hidden="true">
-              <Icon name="search" size={22} />
-            </span>
-            <div>
-              <h2 id="research-question-heading">Your research question</h2>
-              <p>{topic.researchQuestion}</p>
+            <div className="detail-block detail-block--why">
+              <span className="detail-label">
+                <Icon name="bulb" size={14} /> Why it matters
+              </span>
+              <p>{topic.whyItMatters}</p>
+            </div>
+
+            <div className="research-question">
+              <span className="research-question__icon" aria-hidden="true">
+                <Icon name="search" size={22} />
+              </span>
+              <div>
+                <h3 id="research-question-label">Your research question</h3>
+                <p>{topic.researchQuestion}</p>
+                <CopyButton
+                  text={topic.researchQuestion}
+                  label="Copy question"
+                  copiedLabel="Question copied"
+                  className="text-action copy-question"
+                  toastMessage="Research question copied."
+                />
+              </div>
             </div>
           </section>
 
-          <section className="checklist-section" aria-labelledby="checklist-heading">
-            <div className="section-heading section-heading--tight">
-              <div>
-                <h2 id="checklist-heading">The checklist</h2>
-                <p className="section-sub">Five steps to a real understanding.</p>
-              </div>
-              <span className="checklist-progress">
-                {checkedCount}/{checks.length}
+          <section id="step-research" className="ritual-step-block" aria-labelledby="research-heading">
+            <div className="ritual-step-block__head">
+              <span className={`step-index${currentStep === 'step-research' ? ' is-current' : ''}`}>
+                02
               </span>
+              <div>
+                <h2 id="research-heading">Research and capture sources</h2>
+                <p>
+                  Keep the links you actually use. They stay with this session in your browser.
+                </p>
+              </div>
             </div>
-            <div
-              className="checklist-bar"
-              role="progressbar"
-              aria-valuemin={0}
-              aria-valuemax={checks.length}
-              aria-valuenow={checkedCount}
-              aria-label="Research checklist progress"
-            >
-              <span style={{ width: `${(checkedCount / checks.length) * 100}%` }} />
+
+            <form className="source-form" onSubmit={addSource}>
+              <label htmlFor="source-input" className="sr-only">
+                Add a source link or reference
+              </label>
+              <span className="source-form__icon" aria-hidden="true">
+                <Icon name="link" size={17} />
+              </span>
+              <input
+                id="source-input"
+                type="text"
+                value={sourceInput}
+                onChange={(event) => setSourceInput(event.target.value)}
+                placeholder="Paste a link, or note a book, paper, or talk…"
+                autoComplete="off"
+                spellCheck={false}
+              />
+              <button
+                type="submit"
+                className="btn btn--soft btn--sm source-form__submit"
+                disabled={!sourceInput.trim()}
+                aria-label="Add source"
+              >
+                <Icon name="plus" size={15} />
+                <span>Add source</span>
+              </button>
+            </form>
+
+            {draft.sources.length === 0 ? (
+              <p className="sources-empty">
+                <Icon name="info" size={14} /> Start with primary material: documentation, a paper,
+                or a specification. Then compare one second explanation.
+              </p>
+            ) : (
+              <ul className="source-list" aria-label="Sources for this session">
+                {draft.sources.map((source) => (
+                  <li key={source.id} className="source-row">
+                    <span className="source-row__icon" aria-hidden="true">
+                      <Icon name={source.url ? 'link' : 'flag'} size={15} />
+                    </span>
+                    <span className="source-row__main">
+                      {source.url ? (
+                        <a href={source.url} target="_blank" rel="noreferrer noopener">
+                          {source.label}
+                          <span className="sr-only"> (opens in a new tab)</span>
+                        </a>
+                      ) : (
+                        source.label
+                      )}
+                    </span>
+                    <button
+                      type="button"
+                      className="icon-btn source-row__remove"
+                      onClick={() => removeSource(source.id)}
+                      aria-label={`Remove source ${source.label}`}
+                    >
+                      <Icon name="close" size={14} />
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+
+            <div className="research-moves">
+              <div className="research-moves__head">
+                <h3>Research moves</h3>
+                <span>
+                  {checkedCount}/{RESEARCH_MOVES.length}
+                </span>
+              </div>
+              <ul className="checklist">
+                {RESEARCH_MOVES.map((check, index) => (
+                  <li key={check}>
+                    <label className={`check-row${draft.checked[index] ? ' is-checked' : ''}`}>
+                      <input
+                        type="checkbox"
+                        checked={draft.checked[index] ?? false}
+                        onChange={() => toggleCheck(index)}
+                      />
+                      <span className="check-box" aria-hidden="true">
+                        <Icon name="check" size={13} />
+                      </span>
+                      <span className="check-text">{check}</span>
+                      <span className="check-index" aria-hidden="true">
+                        0{index + 1}
+                      </span>
+                    </label>
+                  </li>
+                ))}
+              </ul>
             </div>
-            <ul className="checklist">
-              {checks.map((check, index) => (
-                <li key={check}>
-                  <label className={`check-row${checked[index] ? ' is-checked' : ''}`}>
-                    <input
-                      type="checkbox"
-                      checked={checked[index] ?? false}
-                      onChange={() => toggleCheck(index)}
-                    />
-                    <span className="check-box" aria-hidden="true">
-                      <Icon name="check" size={13} />
-                    </span>
-                    <span className="check-text">{check}</span>
-                    <span className="check-index" aria-hidden="true">
-                      0{index + 1}
-                    </span>
-                  </label>
-                </li>
+          </section>
+
+          <section id="step-answer" className="ritual-step-block" aria-labelledby="answer-heading">
+            <div className="ritual-step-block__head">
+              <span className={`step-index${currentStep === 'step-answer' ? ' is-current' : ''}`}>
+                03
+              </span>
+              <div>
+                <h2 id="answer-heading">Write your answer</h2>
+                <p>Three to five sentences, in your own words. This is not an essay.</p>
+              </div>
+            </div>
+
+            <label htmlFor="ritual-answer" className="ritual-field-label">
+              Answer this: {topic.researchQuestion}
+            </label>
+            <textarea
+              id="ritual-answer"
+              className="ritual-textarea"
+              rows={5}
+              value={draft.answer}
+              onChange={(event) =>
+                setDraft((current) => ({ ...current, answer: event.target.value }))
+              }
+              placeholder="The mechanism is… It matters because…"
+              aria-describedby="answer-hint"
+            />
+            <p id="answer-hint" className="field-hint">
+              {answerReady
+                ? 'Answer drafted. You can refine it after the timer.'
+                : `Aim for a real explanation — at least ${MIN_ANSWER} characters.`}
+            </p>
+          </section>
+
+          <section id="step-learned" className="ritual-step-block" aria-labelledby="learned-heading">
+            <div className="ritual-step-block__head">
+              <span className={`step-index${currentStep === 'step-learned' ? ' is-current' : ''}`}>
+                04
+              </span>
+              <div>
+                <h2 id="learned-heading">Keep what you learned</h2>
+                <p>The one idea worth carrying into your next project.</p>
+              </div>
+            </div>
+
+            <label htmlFor="ritual-learned" className="ritual-field-label">
+              What I learned
+            </label>
+            <textarea
+              id="ritual-learned"
+              className="ritual-textarea"
+              rows={5}
+              value={draft.learned}
+              onChange={(event) =>
+                setDraft((current) => ({ ...current, learned: event.target.value }))
+              }
+              placeholder="In my own words, this matters because…"
+              aria-describedby="learned-hint"
+            />
+            <p id="learned-hint" className="field-hint">
+              Saved as your note on this topic. If you are stuck:
+            </p>
+            <ul className="reflection-prompts">
+              {prompts.map((prompt) => (
+                <li key={prompt}>{prompt}</li>
               ))}
             </ul>
-            {!complete && (
-              <button type="button" className="btn btn--clay btn--sm finish-btn" onClick={finish}>
-                <Icon name="check" size={16} /> I&rsquo;ve finished this session
-              </button>
-            )}
-          </section>
 
-          {complete && (
-            <section className="reflection" ref={reflectionRef} aria-labelledby="reflection-heading">
-              <div className="reflection__badge" aria-hidden="true">
-                <Icon name="spark" size={22} />
+            <div className="session-finish">
+              <div>
+                <h3>{complete ? 'Session saved' : 'Close the loop'}</h3>
+                <p>
+                  {complete
+                    ? 'Your answer, sources, and takeaway are on your shelf.'
+                    : 'Finishing saves your takeaway to your shelf and records the session. The timer is optional.'}
+                </p>
               </div>
-              <p className="eyebrow">Session complete</p>
-              <h2 id="reflection-heading">Close the loop.</h2>
-              <p className="reflection__intro">
-                You gave one idea fifteen focused minutes. Before the tabs close, keep the part
-                that matters: what you now understand, and what you still do not.
-              </p>
-              <ol className="prompt-list">
-                {prompts.map((prompt) => (
-                  <li key={prompt}>{prompt}</li>
-                ))}
-              </ol>
-              <label htmlFor="reflection-note" className="reflection-label">
-                Your reflection
-              </label>
-              <textarea
-                id="reflection-note"
-                className="reflection-textarea"
-                rows={6}
-                value={reflection}
-                onChange={(event) => setReflection(event.target.value)}
-                placeholder="In my own words, this is important because…"
-              />
-              <div className="reflection-actions">
-                <button type="button" className="btn btn--primary btn--sm" onClick={handleSaveReflection}>
-                  <Icon name="bookmark" size={16} /> Save reflection
-                </button>
-                <Link to="/" className="btn btn--ghost btn--sm">
-                  Draw another topic
-                  <Icon name="arrowUpRight" size={15} />
-                </Link>
-                <Link to={relatedHref} className="text-action">
-                  Read the full brief <Icon name="arrowRight" size={14} />
-                </Link>
+              <button type="button" className="btn btn--primary" onClick={finishSession}>
+                <Icon name={complete ? 'rotate' : 'check'} size={16} />
+                {complete ? 'Update saved session' : 'Finish and save session'}
+              </button>
+            </div>
+
+            {complete && (
+              <div className="session-complete" ref={completionRef}>
+                <span className="session-complete__icon" aria-hidden="true">
+                  <Icon name="check" size={20} />
+                </span>
+                <div>
+                  <p className="eyebrow">Session complete</p>
+                  <h3>You kept the part that matters.</h3>
+                  <p>
+                    {draft.spentSeconds > 0
+                      ? `${Math.max(1, Math.round(draft.spentSeconds / 60))} focused minutes`
+                      : 'No timer needed'}{' '}
+                    · {draft.sources.length} {draft.sources.length === 1 ? 'source' : 'sources'} ·{' '}
+                    {checkedCount} research {checkedCount === 1 ? 'move' : 'moves'}
+                  </p>
+                  <div className="session-complete__actions">
+                    <Link to="/" className="btn btn--primary btn--sm">
+                      <Icon name="shuffle" size={15} /> Draw another topic
+                    </Link>
+                    <Link to="/saved" className="btn btn--clay btn--sm">
+                      <Icon name="bookmark" size={15} /> Open your shelf
+                    </Link>
+                  </div>
+                </div>
               </div>
-              <p className="reflection-note">
-                <Icon name="info" size={13} /> Notes stay in this browser. No account, no upload.
-              </p>
-            </section>
-          )}
+            )}
+
+            <p className="reflection-note">
+              <Icon name="info" size={13} /> Notes stay in this browser. No account, no upload.
+            </p>
+          </section>
         </article>
 
-        <aside className="timer-column" aria-label="Research timer">
-          <div
+        <aside className="timer-column" aria-label="Research tools">
+          <div className="timer-sticky">
+            <div
+              id="timer-card"
             className={`timer-card${running ? ' is-running' : ''}${showComplete ? ' is-complete' : ''}`}
           >
             <span className="timer-card__eyebrow">The fifteen</span>
@@ -359,18 +583,24 @@ function RitualSession({ topic }: { topic: Topic }) {
                   {formatTime(remaining)}
                 </span>
                 <span className="timer-label">
-                  {showComplete ? 'Session complete' : running ? 'Focused' : hasStarted ? 'Paused' : 'Ready'}
+                  {showComplete ? 'Time is up' : running ? 'Focused' : draft.started ? 'Paused' : 'Ready'}
                 </span>
               </div>
             </div>
             <p className="sr-only" aria-live="polite">
-              {running ? `${minutesLeft} minutes remaining` : showComplete ? 'Session complete' : 'Timer paused'}
+              {running
+                ? `${minutesLeft} minutes remaining`
+                : showComplete
+                  ? 'Fifteen minutes complete'
+                  : draft.started
+                    ? 'Timer paused'
+                    : 'Timer ready'}
             </p>
             <div className="timer-actions">
               {!running ? (
                 <button type="button" className="btn btn--primary btn--sm" onClick={start}>
                   <Icon name="play" size={15} />
-                  {remaining === 0 ? 'Start again' : hasStarted ? 'Resume' : 'Start timer'}
+                  {remaining === 0 ? 'Start again' : draft.started ? 'Resume' : 'Start timer'}
                 </button>
               ) : (
                 <button type="button" className="btn btn--clay btn--sm" onClick={pause}>
@@ -387,6 +617,41 @@ function RitualSession({ topic }: { topic: Topic }) {
               </button>
             </div>
             <p className="timer-optional">The timer is optional. The thinking is not.</p>
+          </div>
+
+          <nav className="ritual-rail" aria-label="Session steps">
+            <div className="ritual-rail__head">
+              <h2>Your session</h2>
+              <span>
+                {doneCount}/{steps.length}
+              </span>
+            </div>
+            <ol className="ritual-rail__list">
+              {steps.map((step, index) => (
+                <li key={step.id}>
+                  <button
+                    type="button"
+                    className={`rail-step${step.done ? ' is-done' : ''}${
+                      currentStep === step.id ? ' is-current' : ''
+                    }`}
+                    onClick={() => goToStep(step.target)}
+                    aria-current={currentStep === step.id ? 'step' : undefined}
+                  >
+                    <span className="rail-step__index" aria-hidden="true">
+                      {step.done ? <Icon name="check" size={12} /> : `0${index + 1}`}
+                    </span>
+                    <span className="rail-step__label">{step.label}</span>
+                    <span className="sr-only">
+                      {step.done ? ' (complete)' : currentStep === step.id ? ' (current step)' : ''}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ol>
+              <p className="ritual-rail__foot">
+                <Icon name="info" size={13} /> Everything autosaves in this browser.
+              </p>
+            </nav>
           </div>
 
           <div className="ritual-aside">

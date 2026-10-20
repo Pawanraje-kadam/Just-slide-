@@ -76,21 +76,17 @@
     position: static;
     order: -1;
     display: grid;
-    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
     gap: 12px;
-    align-items: stretch;
+    align-items: start;
   }
 
-  .timer-card {
-    grid-row: span 2;
-  }
-
-  .ritual-aside:last-child {
-    align-self: start;
+  .timer-sticky {
+    display: contents;
   }
 
   .ritual-aside {
-    height: 100%;
+    grid-column: 1 / -1;
   }
 
   .timer-ring {
@@ -1095,5 +1091,65 @@
   .honesty-card {
     flex-direction: column;
     border-radius: 30px;
+  }
+}
+
+@media (max-width: 560px) {
+  .ritual-step-block {
+    padding: 18px 16px;
+    border-radius: 26px;
+  }
+
+  .ritual-step-block__head {
+    gap: 0.7rem;
+  }
+
+  .step-index {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+  }
+
+  .source-form {
+    flex-wrap: wrap;
+    padding: 8px 8px 8px 12px;
+  }
+
+  .source-form input {
+    flex: 1 1 100%;
+  }
+
+  .source-form__submit {
+    margin-left: auto;
+  }
+
+  .source-form__submit span {
+    display: none;
+  }
+
+  .source-form__submit {
+    width: 34px;
+    height: 34px;
+    min-height: 34px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .session-finish {
+    align-items: flex-start;
+  }
+
+  .session-finish .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .session-complete {
+    flex-direction: column;
+  }
+
+  .session-complete__actions .btn {
+    flex: 1;
+    justify-content: center;
   }
 }
