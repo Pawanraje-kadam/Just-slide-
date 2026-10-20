@@ -1189,18 +1189,6 @@
   animation: modal-in 280ms var(--ease-clay) both;
 }
 
-.topic-modal__glow {
-  position: absolute;
-  top: -120px;
-  right: -80px;
-  width: 360px;
-  height: 360px;
-  border-radius: 50%;
-  background: var(--tint-wash);
-  pointer-events: none;
-  filter: blur(10px);
-}
-
 .topic-modal__header {
   position: relative;
   z-index: 2;

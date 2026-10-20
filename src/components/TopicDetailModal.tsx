@@ -114,7 +114,6 @@ export function TopicDetailModal({ topic, onClose, onSelectTopic }: TopicDetailM
         tabIndex={-1}
         data-family={category?.family ?? 'lavender'}
       >
-        <div className="topic-modal__glow" aria-hidden="true" />
         <div className="topic-modal__header">
           <div className="topic-modal__crumb">
             <CategoryGlyph category={category} size="sm" />
