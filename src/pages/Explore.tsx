@@ -1,3 +1,4 @@
+import { m } from 'motion/react';
 import { useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Icon } from '../components/Icons';
@@ -11,6 +12,7 @@ import {
   topicById,
 } from '../lib/library';
 import { usePageMeta } from '../lib/meta';
+import { clayEase } from '../motion/presets';
 import { useProgress } from '../providers/ProgressProvider';
 import { useSaved } from '../providers/SavedProvider';
 import type { Difficulty, DifficultyFilter, Topic } from '../types';
@@ -86,7 +88,12 @@ export function Explore() {
 
   return (
     <>
-      <section className="page-head container">
+      <m.section
+        className="page-head container"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: clayEase }}
+      >
         <div className="page-head__copy">
           <p className="eyebrow">
             <Icon name="layers" size={13} />
@@ -126,7 +133,7 @@ export function Explore() {
             <Icon name="spark" size={26} />
           </span>
         </div>
-      </section>
+      </m.section>
 
       <section className="library container" aria-labelledby="library-results-heading">
         <h2 id="library-results-heading" className="sr-only">

@@ -1,3 +1,4 @@
+import { m } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { CategoryGlyph } from '../components/CategoryGlyph';
@@ -14,6 +15,9 @@ import {
   topics,
 } from '../lib/library';
 import { usePageMeta } from '../lib/meta';
+import { CountUp } from '../motion/CountUp';
+import { revealSoft, revealUp, riseItem, staggerParent } from '../motion/presets';
+import { usePointerTilt } from '../motion/usePointerTilt';
 import {
   collectionLabel,
   drawTopic,
@@ -25,6 +29,8 @@ import { useProgress } from '../providers/ProgressProvider';
 import { useSaved } from '../providers/SavedProvider';
 import { useToast } from '../providers/ToastProvider';
 import type { Category, CollectionValue, DifficultyFilter, Topic } from '../types';
+
+const MotionLink = m.create(Link);
 
 const difficulties: Array<DifficultyFilter> = ['Any', 'Beginner', 'Intermediate', 'Advanced'];
 
@@ -83,6 +89,7 @@ export function Discover() {
   const [drawError, setDrawError] = useState('');
   const [revealKey, setRevealKey] = useState(0);
   const generatorRef = useRef<HTMLElement>(null);
+  const heroTilt = usePointerTilt(5.5);
 
   useEffect(() => {
     writeJSON(storageKeys.drawCollection, collection);
@@ -241,11 +248,17 @@ export function Discover() {
           </div>
           <div className="hero-meta">
             <span>
-              <strong>{libraryStats.topics}</strong> curated topics
+              <strong>
+                <CountUp value={libraryStats.topics} />
+              </strong>{' '}
+              curated topics
             </span>
             <span className="hero-meta__dot" aria-hidden="true" />
             <span>
-              <strong>{libraryStats.categories}</strong> fields
+              <strong>
+                <CountUp value={libraryStats.categories} duration={0.8} />
+              </strong>{' '}
+              fields
             </span>
             <span className="hero-meta__dot" aria-hidden="true" />
             <span>No account needed</span>
@@ -254,65 +267,76 @@ export function Discover() {
 
         <div className="hero-art" aria-hidden="true">
           <div className="art-halo" />
-          <div className="art-stage">
-            <div className="art-panel">
-              <svg className="art-lines" viewBox="0 0 420 420" fill="none" aria-hidden="true">
-                <path d="M34 40C108 96 174 160 210 210" />
-                <path d="M386 62C302 120 246 170 210 210" />
-                <path d="M36 300C110 265 174 236 210 210" />
-                <path d="M384 318C302 270 246 236 210 210" />
-                <circle cx="34" cy="40" r="3.4" />
-                <circle cx="386" cy="62" r="3.4" />
-                <circle cx="36" cy="300" r="3.4" />
-                <circle cx="384" cy="318" r="3.4" />
-              </svg>
-              <span className="art-orbit art-orbit--one" />
-              <span className="art-orbit art-orbit--two" />
-              <div className="art-core">
-                <span className="art-core__tile art-core__tile--mint" />
-                <span className="art-core__tile art-core__tile--peach" />
-                <span className="art-core__tile art-core__tile--blue" />
-                <span className="art-core__tile art-core__tile--ink">
-                  <span />
-                </span>
+          <m.div
+            className="art-tilt"
+            style={{
+              rotateX: heroTilt.rotateX,
+              rotateY: heroTilt.rotateY,
+              transformPerspective: heroTilt.transformPerspective,
+            }}
+            onPointerMove={heroTilt.onPointerMove}
+            onPointerLeave={heroTilt.onPointerLeave}
+          >
+            <div className="art-stage">
+              <div className="art-panel">
+                <svg className="art-lines" viewBox="0 0 420 420" fill="none" aria-hidden="true">
+                  <path d="M34 40C108 96 174 160 210 210" />
+                  <path d="M386 62C302 120 246 170 210 210" />
+                  <path d="M36 300C110 265 174 236 210 210" />
+                  <path d="M384 318C302 270 246 236 210 210" />
+                  <circle cx="34" cy="40" r="3.4" />
+                  <circle cx="386" cy="62" r="3.4" />
+                  <circle cx="36" cy="300" r="3.4" />
+                  <circle cx="384" cy="318" r="3.4" />
+                </svg>
+                <span className="art-orbit art-orbit--one" />
+                <span className="art-orbit art-orbit--two" />
+                <div className="art-core">
+                  <span className="art-core__tile art-core__tile--mint" />
+                  <span className="art-core__tile art-core__tile--peach" />
+                  <span className="art-core__tile art-core__tile--blue" />
+                  <span className="art-core__tile art-core__tile--ink">
+                    <span />
+                  </span>
+                </div>
               </div>
-            </div>
 
-            <div className="art-node art-node--one">
-              <span className="art-node__glyph glyph--lavender">
-                <Icon name="network" size={19} />
-              </span>
-              <span>Consensus</span>
-            </div>
-            <div className="art-node art-node--two">
-              <span className="art-node__glyph glyph--mint">
-                <Icon name="search" size={19} />
-              </span>
-              <span>Retrieval</span>
-            </div>
-            <div className="art-node art-node--three">
-              <span className="art-node__glyph glyph--peach">
-                <Icon name="cpu" size={19} />
-              </span>
-              <span>Cache</span>
-            </div>
-            <div className="art-node art-node--four">
-              <span className="art-node__glyph glyph--blue">
-                <Icon name="brackets" size={19} />
-              </span>
-              <span>Types</span>
-            </div>
+              <div className="art-node art-node--one">
+                <span className="art-node__glyph glyph--lavender">
+                  <Icon name="network" size={19} />
+                </span>
+                <span>Consensus</span>
+              </div>
+              <div className="art-node art-node--two">
+                <span className="art-node__glyph glyph--mint">
+                  <Icon name="search" size={19} />
+                </span>
+                <span>Retrieval</span>
+              </div>
+              <div className="art-node art-node--three">
+                <span className="art-node__glyph glyph--peach">
+                  <Icon name="cpu" size={19} />
+                </span>
+                <span>Cache</span>
+              </div>
+              <div className="art-node art-node--four">
+                <span className="art-node__glyph glyph--blue">
+                  <Icon name="brackets" size={19} />
+                </span>
+                <span>Types</span>
+              </div>
 
-            <div className="art-ticket">
-              <span className="art-ticket__top">
-                <Icon name="timer" size={13} /> 15 MIN
-              </span>
-              <span className="art-ticket__bottom">One powerful idea</span>
+              <div className="art-ticket">
+                <span className="art-ticket__top">
+                  <Icon name="timer" size={13} /> 15 MIN
+                </span>
+                <span className="art-ticket__bottom">One powerful idea</span>
+              </div>
+              <span className="art-sphere art-sphere--peach" />
+              <span className="art-sphere art-sphere--mint" />
+              <span className="art-sphere art-sphere--lavender" />
             </div>
-            <span className="art-sphere art-sphere--peach" />
-            <span className="art-sphere art-sphere--mint" />
-            <span className="art-sphere art-sphere--lavender" />
-          </div>
+          </m.div>
           <p className="art-caption">
             <span className="art-caption__line" />
             Every draw sits on a larger map.
@@ -321,7 +345,7 @@ export function Discover() {
       </section>
 
       <section className="generator-section container" id="generate" ref={generatorRef} aria-labelledby="draw-heading">
-        <div className="generator-heading">
+        <m.div className="generator-heading" {...revealUp}>
           <div>
             <p className="eyebrow">
               <Icon name="sparkSmall" size={13} />
@@ -347,9 +371,9 @@ export function Discover() {
               <Icon name={tuningOpen ? 'chevronUp' : 'chevronDown'} size={15} />
             </button>
           </div>
-        </div>
+        </m.div>
 
-        <div className="draw-stage">
+        <m.div className="draw-stage" {...revealSoft}>
           <div className="draw-side" aria-hidden="true">
             <span className="draw-side__label">CURATED / NOT CRAWLED</span>
             <span className="draw-side__rule" />
@@ -600,9 +624,13 @@ export function Discover() {
               <Icon name="spark" size={17} />
             </span>
           </div>
-        </div>
+        </m.div>
 
-        <aside className="curation-strip" aria-label="How the library is curated">
+        <m.aside
+          className="curation-strip"
+          aria-label="How the library is curated"
+          {...revealUp}
+        >
           <span className="curation-strip__icon" aria-hidden="true">
             <Icon name="shield" size={17} />
           </span>
@@ -625,7 +653,7 @@ export function Discover() {
           <Link to="/standard" className="curation-strip__link">
             Read the standard <Icon name="arrowRight" size={14} />
           </Link>
-        </aside>
+        </m.aside>
 
         {recentTopics.length > 0 && (
           <div className="recent-draws">
@@ -648,7 +676,11 @@ export function Discover() {
         )}
       </section>
 
-      <section className="ritual-section container" aria-labelledby="ritual-heading">
+      <m.section
+        className="ritual-section container"
+        aria-labelledby="ritual-heading"
+        {...revealUp}
+      >
         <div className="ritual-card">
           <div className="ritual-intro">
             <p className="eyebrow">
@@ -668,36 +700,46 @@ export function Discover() {
               Optional timer. No sign-up. Leave whenever you like.
             </span>
           </div>
-          <ol className="ritual-steps">
-            <li className="ritual-step">
+          <m.ol
+            className="ritual-steps"
+            initial="hidden"
+            whileInView="show"
+            viewport={{ once: true, amount: 0.25 }}
+            variants={staggerParent}
+          >
+            <m.li className="ritual-step" variants={riseItem}>
               <span className="ritual-step__number">01</span>
               <span className="ritual-step__glyph">
                 <Icon name="spark" size={20} />
               </span>
               <h3>Draw a question</h3>
               <p>Press once. Receive one topic chosen for value, not popularity.</p>
-            </li>
-            <li className="ritual-step">
+            </m.li>
+            <m.li className="ritual-step" variants={riseItem}>
               <span className="ritual-step__number">02</span>
               <span className="ritual-step__glyph">
                 <Icon name="search" size={20} />
               </span>
               <h3>Research the mechanism</h3>
               <p>Keep the sources you use. Define the mechanism, then find one limitation or trade-off.</p>
-            </li>
-            <li className="ritual-step">
+            </m.li>
+            <m.li className="ritual-step" variants={riseItem}>
               <span className="ritual-step__number">03</span>
               <span className="ritual-step__glyph">
                 <Icon name="chat" size={20} />
               </span>
               <h3>Answer, then keep it</h3>
               <p>Close the tabs. Answer the question in your own words and save one takeaway.</p>
-            </li>
-          </ol>
+            </m.li>
+          </m.ol>
         </div>
-      </section>
+      </m.section>
 
-      <section className="field-section container" aria-labelledby="fields-heading">
+      <m.section
+        className="field-section container"
+        aria-labelledby="fields-heading"
+        {...revealUp}
+      >
         <div className="section-heading">
           <div>
             <p className="eyebrow">
@@ -711,35 +753,48 @@ export function Discover() {
             <Icon name="arrowUpRight" size={15} />
           </Link>
         </div>
-        <div className="field-grid">
+        <m.div
+          className="field-grid"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.2 }}
+          variants={staggerParent}
+        >
           {featured.map((category) => (
-            <Link
+            <MotionLink
               key={category.slug}
               to={`/explore?category=${category.slug}`}
               className="field-tile"
               data-family={category.family}
+              variants={riseItem}
+              whileHover={{ y: -4, transition: { duration: 0.22 } }}
+              whileTap={{ scale: 0.985, transition: { duration: 0.12 } }}
             >
               <CategoryGlyph category={category} size="md" />
               <span className="field-tile__name">{category.name}</span>
-              <span className="field-tile__count">{category.count} topics</span>
+              <span className="field-tile__count">
+                <CountUp value={category.count} duration={0.7} /> topics
+              </span>
               <Icon name="arrowUpRight" size={16} className="field-tile__arrow" />
-            </Link>
+            </MotionLink>
           ))}
-        </div>
-        <div className="map-note">
+        </m.div>
+        <m.div className="map-note" {...revealSoft}>
           <span className="map-note__icon">
             <Icon name="spark" size={18} />
           </span>
           <p>
-            <strong>{libraryStats.topics} topics</strong> across algorithms, systems, AI, security,
-            languages, product, and the physical layer. Every entry is reviewed for durable
-            technical value.
+            <strong>
+              <CountUp value={libraryStats.topics} duration={1.3} /> topics
+            </strong>{' '}
+            across algorithms, systems, AI, security, languages, product, and the physical layer.
+            Every entry is reviewed for durable technical value.
           </p>
           <Link to="/explore" className="text-action">
             Open the library <Icon name="arrowRight" size={15} />
           </Link>
-        </div>
-      </section>
+        </m.div>
+      </m.section>
     </>
   );
 }

@@ -1,7 +1,10 @@
+import { m } from 'motion/react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import { libraryStats } from '../lib/library';
 import { usePageMeta } from '../lib/meta';
+import { CountUp } from '../motion/CountUp';
+import { clayEase, revealUp, riseItem, staggerParent } from '../motion/presets';
 
 const rules = [
   {
@@ -62,7 +65,12 @@ export function Standard() {
 
   return (
     <>
-      <section className="page-head container">
+      <m.section
+        className="page-head container"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: clayEase }}
+      >
         <div className="page-head__copy">
           <p className="eyebrow">
             <Icon name="check" size={13} />
@@ -85,11 +93,15 @@ export function Standard() {
         </div>
         <div className="standard-stats" aria-label="Library at a glance">
           <div className="standard-stat">
-            <span className="standard-stat__value">{libraryStats.topics}</span>
+            <span className="standard-stat__value">
+              <CountUp value={libraryStats.topics} />
+            </span>
             <span className="standard-stat__label">validated topics</span>
           </div>
           <div className="standard-stat">
-            <span className="standard-stat__value">{libraryStats.categories}</span>
+            <span className="standard-stat__value">
+              <CountUp value={libraryStats.categories} duration={0.8} />
+            </span>
             <span className="standard-stat__label">fields of computing</span>
           </div>
           <div className="standard-stat">
@@ -97,9 +109,13 @@ export function Standard() {
             <span className="standard-stat__label">invented at runtime</span>
           </div>
         </div>
-      </section>
+      </m.section>
 
-      <section className="standard-section container" aria-labelledby="rules-heading">
+      <m.section
+        className="standard-section container"
+        aria-labelledby="rules-heading"
+        {...revealUp}
+      >
         <div className="section-heading">
           <div>
             <p className="eyebrow">
@@ -114,18 +130,28 @@ export function Standard() {
           </p>
         </div>
 
-        <ol className="rule-grid">
+        <m.ol
+          className="rule-grid"
+          initial="hidden"
+          whileInView="show"
+          viewport={{ once: true, amount: 0.15 }}
+          variants={staggerParent}
+        >
           {rules.map((rule, index) => (
-            <li key={rule.title} className="rule-card">
+            <m.li key={rule.title} className="rule-card" variants={riseItem}>
               <span className="rule-card__number">{String(index + 1).padStart(2, '0')}</span>
               <h3>{rule.title}</h3>
               <p>{rule.body}</p>
-            </li>
+            </m.li>
           ))}
-        </ol>
-      </section>
+        </m.ol>
+      </m.section>
 
-      <section className="standard-section container" aria-labelledby="excluded-heading">
+      <m.section
+        className="standard-section container"
+        aria-labelledby="excluded-heading"
+        {...revealUp}
+      >
         <div className="split-panel">
           <div className="split-panel__copy">
             <p className="eyebrow">
@@ -149,9 +175,13 @@ export function Standard() {
             ))}
           </ul>
         </div>
-      </section>
+      </m.section>
 
-      <section className="standard-section container" aria-labelledby="number-heading">
+      <m.section
+        className="standard-section container"
+        aria-labelledby="number-heading"
+        {...revealUp}
+      >
         <div className="honesty-card">
           <span className="honesty-card__mark" aria-hidden="true">
             <Icon name="info" size={22} />
@@ -181,7 +211,7 @@ export function Standard() {
             </div>
           </div>
         </div>
-      </section>
+      </m.section>
     </>
   );
 }

@@ -38,6 +38,11 @@ fifteen minutes of independent research.
 - **Design system** — a claymorphic visual language built from layered shadows, inset
   highlights, pillowy surfaces, pastel tint families, tactile pressed states, custom SVG
   clay illustration, and a hand-built dark theme. No UI framework, no glassmorphism.
+- **Motion** — a small animation layer built on Motion (the MIT-licensed successor to Framer
+  Motion): pointer-parallax on the hero illustration, a hairline reading-progress bar,
+  route transitions, staggered section and card reveals, spring-scoped count-ups for the
+  library statistics, and a nav that deepens its clay shadow once the page moves. Every
+  primitive honours `prefers-reduced-motion`; the CSS keyframes remain hand-authored.
 - **Accessibility** — semantic landmarks, one `h1` per page, labelled controls, visible focus
   states, keyboard and focus-trapped dialogs, live regions for copy/toast/topic feedback,
   `prefers-reduced-motion`, `prefers-contrast`, and color-independent status cues.
@@ -48,10 +53,11 @@ fifteen minutes of independent research.
 
 ## Stack
 
-React 19 · TypeScript · Vite 7 · React Router 7 · hand-authored CSS design tokens.
-Vitest covers dataset integrity, search/filter behavior, draw fairness, related-topic
-scoring, session persistence and migration, source parsing, and streak math. No backend is
-required for this version.
+React 19 · TypeScript · Vite 7 · React Router 7 · Motion 12 (MIT) · hand-authored CSS
+design tokens. Vitest covers dataset integrity, search/filter behavior, draw fairness,
+related-topic scoring, session persistence and migration, source parsing, and streak math.
+No backend is required for this version, and every runtime dependency is free and
+open-source — no paid UI kit, stock-asset subscription, or motion-graphics account.
 
 ## Run it
 
@@ -104,6 +110,7 @@ src/
   providers/             theme, toasts, saved topics + reflections, learning progress
   components/            layout, navigation, topic cards, dialog, icons, controls
   pages/                 Discover, Explore, Saved, Research, 404
+  motion/                Motion provider, presets, tilt, count-up, scroll progress, route frame
   styles/                tokens, components, pages, library, responsive, motion
 ```
 

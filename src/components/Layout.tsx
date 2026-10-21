@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
+import { RouteFrame } from '../motion/RouteFrame';
+import { ScrollProgress } from '../motion/ScrollProgress';
 import { SiteFooter } from './SiteFooter';
 import { SiteHeader } from './SiteHeader';
 
@@ -35,9 +37,12 @@ export function Layout() {
         <span className="ambient ambient--two" />
         <span className="ambient ambient--three" />
       </div>
+      <ScrollProgress />
       <SiteHeader />
       <main id="main" tabIndex={-1}>
-        <Outlet />
+        <RouteFrame>
+          <Outlet />
+        </RouteFrame>
       </main>
       <SiteFooter />
     </>

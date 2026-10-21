@@ -1,3 +1,4 @@
+import { useMotionValueEvent, useScroll } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useTheme } from '../providers/ThemeProvider';
@@ -13,10 +14,17 @@ const links = [
 
 export function SiteHeader() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const { resolved, toggleTheme } = useTheme();
   const { savedIds } = useSaved();
   const location = useLocation();
   const headerRef = useRef<HTMLElement>(null);
+  const { scrollY } = useScroll();
+
+  // Deepen the nav's clay shadow only once the page has actually moved.
+  useMotionValueEvent(scrollY, 'change', (latest) => {
+    setScrolled(latest > 12);
+  });
 
   useEffect(() => {
     setMenuOpen(false);
@@ -41,7 +49,7 @@ export function SiteHeader() {
   }, [menuOpen]);
 
   return (
-    <header className="site-header" ref={headerRef}>
+    <header className={`site-header${scrolled ? ' is-scrolled' : ''}`} ref={headerRef}>
       <div className="container">
         <nav className="nav-shell" aria-label="Primary">
           <Logo />

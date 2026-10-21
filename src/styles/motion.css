@@ -1,0 +1,83 @@
+/* ============================================================
+   Motion layer
+   JS-driven animation primitives from Motion (MIT).
+   CSS keyframes stay in tokens/pages/components.
+   ============================================================ */
+
+/* ---------- Route transitions ---------- */
+
+.route-frame {
+  /* Own block formatting context so route transforms never collapse margins */
+  display: flow-root;
+}
+
+/* ---------- Reading progress ---------- */
+
+.scroll-progress {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 80;
+  height: 3px;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--accent) 0%, #8fb4ff 55%, #f0b48a 100%);
+  box-shadow: 0 1px 6px rgba(91, 70, 210, 0.35);
+  border-radius: 0 3px 3px 0;
+  pointer-events: none;
+}
+
+[data-theme='dark'] .scroll-progress {
+  background: linear-gradient(90deg, #9c8cff 0%, #7fa9ff 55%, #e8ad84 100%);
+  box-shadow: 0 1px 8px rgba(156, 140, 255, 0.45);
+}
+
+/* ---------- Hero tilt wrapper ---------- */
+
+.art-tilt {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* ---------- Count-up numerals ---------- */
+
+.count-up {
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: 'tnum' 1;
+  white-space: nowrap;
+}
+
+/* ---------- Header state ---------- */
+
+.nav-shell {
+  transition:
+    box-shadow 260ms var(--ease-clay),
+    background-color 260ms var(--ease-clay),
+    border-color 260ms var(--ease-clay);
+}
+
+.site-header.is-scrolled .nav-shell {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 22px 40px -24px rgba(32, 33, 43, 0.5);
+}
+
+[data-theme='dark'] .site-header.is-scrolled .nav-shell {
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.06) inset,
+    0 22px 42px -24px rgba(0, 0, 0, 0.7);
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-progress {
+    transition: none;
+  }
+
+  .art-tilt {
+    will-change: auto;
+  }
+}

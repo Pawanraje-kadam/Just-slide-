@@ -1,9 +1,12 @@
+import { m } from 'motion/react';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Icon } from '../components/Icons';
 import { TopicDetailModal } from '../components/TopicDetailModal';
 import { TopicGridCard } from '../components/TopicGridCard';
 import { usePageMeta } from '../lib/meta';
+import { CountUp } from '../motion/CountUp';
+import { clayEase, revealUp } from '../motion/presets';
 import { useProgress } from '../providers/ProgressProvider';
 import { useSaved } from '../providers/SavedProvider';
 import type { Topic } from '../types';
@@ -33,7 +36,12 @@ export function Saved() {
 
   return (
     <>
-      <section className="page-head page-head--saved container">
+      <m.section
+        className="page-head page-head--saved container"
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: clayEase }}
+      >
         <div className="page-head__copy">
           <p className="eyebrow">
             <Icon name="bookmark" size={13} />
@@ -64,7 +72,7 @@ export function Saved() {
           <span className="saved-count__number">{String(savedTopics.length).padStart(2, '0')}</span>
           <span className="saved-count__label">on your shelf</span>
         </div>
-      </section>
+      </m.section>
 
       <section className="saved-section container" aria-labelledby="saved-heading">
         <h2 id="saved-heading" className="sr-only">
@@ -92,21 +100,33 @@ export function Saved() {
           </div>
         ) : (
           <>
-            <section className="progress-strip" aria-label="Your learning progress">
+            <m.section
+              className="progress-strip"
+              aria-label="Your learning progress"
+              {...revealUp}
+            >
               <div className="progress-stat">
-                <span className="progress-stat__value">{savedTopics.length}</span>
+                <span className="progress-stat__value">
+                  <CountUp value={savedTopics.length} duration={0.7} />
+                </span>
                 <span className="progress-stat__label">Saved</span>
               </div>
               <div className="progress-stat">
-                <span className="progress-stat__value">{completedCount}</span>
+                <span className="progress-stat__value">
+                  <CountUp value={completedCount} duration={0.7} />
+                </span>
                 <span className="progress-stat__label">Sessions finished</span>
               </div>
               <div className="progress-stat">
-                <span className="progress-stat__value">{noteCount}</span>
+                <span className="progress-stat__value">
+                  <CountUp value={noteCount} duration={0.7} />
+                </span>
                 <span className="progress-stat__label">Reflections</span>
               </div>
               <div className="progress-stat">
-                <span className="progress-stat__value">{streak}</span>
+                <span className="progress-stat__value">
+                  <CountUp value={streak} duration={0.7} />
+                </span>
                 <span className="progress-stat__label">Day streak</span>
               </div>
               <p className="progress-strip__note">
@@ -115,7 +135,7 @@ export function Saved() {
                   ? `${weekCount} session${weekCount === 1 ? '' : 's'} finished in the last seven days. No goal to hit — just evidence you were here.`
                   : 'Finish a session to start a quiet record of what you have learned.'}
               </p>
-            </section>
+            </m.section>
 
             <div className="saved-note-row">
               <p>

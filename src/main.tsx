@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import { App } from './App';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { MotionProvider } from './motion/MotionProvider';
 import { ProgressProvider } from './providers/ProgressProvider';
 import { SavedProvider } from './providers/SavedProvider';
 import { ThemeProvider } from './providers/ThemeProvider';
@@ -15,7 +16,8 @@ if (!container) throw new Error('Root element not found');
 createRoot(container).render(
   <StrictMode>
     <BrowserRouter>
-      <ThemeProvider>
+      <MotionProvider>
+        <ThemeProvider>
         <ToastProvider>
           <ProgressProvider>
             <SavedProvider>
@@ -25,7 +27,8 @@ createRoot(container).render(
             </SavedProvider>
           </ProgressProvider>
         </ToastProvider>
-      </ThemeProvider>
+        </ThemeProvider>
+      </MotionProvider>
     </BrowserRouter>
   </StrictMode>,
 );
